@@ -12,22 +12,31 @@ import pandas as pd
 import sqlite3
 import os
 
-# ページのタイトル設定（wideモードで横幅を最大化）
+# ページのタイトル設定
 st.set_page_config(page_title="第十九改正日本薬局方 検索ツール", layout="wide")
 
-# CSSで表の表示をさらにコンパクトにする設定
+# CSSで全体のレイアウトを調整
 st.markdown("""
     <style>
-    .main > div {
+    /* 上部の余白を適度に確保して「消える」のを防ぐ */
+    .block-container {
         padding-top: 2rem;
+        padding-bottom: 1rem;
     }
-    div[data-testid="stDataFrame"] > div {
-        height: 800px; /* 表の表示高さを大きく固定 */
+    /* 表の表示高さを固定 */
+    div[data-testid="stDataFrame"] > div { 
+        height: 800px; 
+    }
+    /* 検索入力欄のラベルを少し小さくする */
+    .stTextInput label {
+        font-size: 14px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🧪 第十九改正日本薬局方 検索システム")
+# 【修正】タイトル部分：確実に見えるように st.markdown で再構築
+st.markdown("<h3 style='text-align: center; margin-bottom: 0px;'>🧪 第十九改正日本薬局方 検索システム</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 14px; margin-bottom: 20px;'>「新規」収載品目や「改正」箇所を素早く確認できます</p>", unsafe_allow_html=True)
 
 # データベース接続関数
 def get_data(query, params=()):
@@ -36,69 +45,94 @@ def get_data(query, params=()):
     conn.close()
     return df
 
-# --- サイドバー ---
+# --- サイドバー：絞り込み機能 ---
 st.sidebar.header("表示フィルター")
 category_filter = st.sidebar.multiselect(
-    "カテゴリー選択",
-    options=["化学薬品等", "生薬等"],
+    "カテゴリー選択", 
+    options=["化学薬品等", "生薬等"], 
     default=["化学薬品等", "生薬等"]
 )
+
+st.sidebar.subheader("表示設定（ノイズ除去）")
+exclude_chemical_names = st.sidebar.checkbox("🧬 「化学名」を除外", value=False)
+exclude_seijyo = st.sidebar.checkbox("🌿 「4.生薬の性状」を除外", value=False)
 
 st.sidebar.subheader("クイック検索")
 only_new = st.sidebar.checkbox("✨ 新規収載のみ表示")
 only_kaisei = st.sidebar.checkbox("📝 改正がある品目のみ表示")
 
-# --- メイン画面 ---
-search_query = st.text_input("医薬品名を入力してください", "")
+# --- メイン画面：検索窓 ---
+search_query = st.text_input("医薬品名を入力してください", "", placeholder="例：アスピリン、エキス")
 
-# 抽出ロジック（中略：変更なし）
+# --- データ抽出ロジック ---
 sql = "SELECT * FROM pharmaceuticals WHERE 1=1"
 params = []
+
 if search_query:
     sql += " AND 医薬品名 LIKE ?"
     params.append(f"%{search_query}%")
+
 if only_new:
     sql += " AND 新規 = '〇'"
+
 if only_kaisei:
     sql += " AND 改正 = '〇'"
+
 if category_filter:
     sql += f" AND カテゴリー IN ({','.join(['?']*len(category_filter))})"
     params.extend(category_filter)
 
+# データの取得
 df_result = get_data(sql, params)
 
+# --- 除外フィルター処理 ---
 if not df_result.empty:
-    st.success(f"{len(df_result)} 件ヒット（スクロールで全件確認できます）")
+    if exclude_chemical_names:
+        mask_chem = df_result['変更項目'].fillna('').str.contains('化学名', na=False)
+        mask_page_empty = df_result['頁'].fillna('').str.strip() == ''
+        df_result = df_result[~(mask_chem | mask_page_empty)]
+    
+    if exclude_seijyo:
+        mask_seijyo = df_result['変更項目'].fillna('').str.contains('4.生薬の性状', na=False)
+        df_result = df_result[~mask_seijyo]
 
+if not df_result.empty:
+    st.success(f"{len(df_result)} 件表示中")
+    
     display_cols = ['医薬品名', '頁', '新規', '改正', '変更項目', 'カテゴリー']
     actual_cols = [c for c in display_cols if c in df_result.columns]
     final_df = df_result[actual_cols]
 
-    # スタイリング関数
+    # スタイリング
     def color_o(val):
-        if val == '〇':
-            return 'background-color: #ffeb3b; color: black; font-weight: bold'
+        if val == '〇': return 'background-color: #ffeb3b; color: black; font-weight: bold'
         return ''
 
-    # バージョン互換性のあるスタイル適用
     try:
         styled_df = final_df.style.map(color_o, subset=['新規', '改正'])
     except AttributeError:
         styled_df = final_df.style.applymap(color_o, subset=['新規', '改正'])
 
-    # --- 【改良点】表示設定を強化 ---
+    # 表の表示と列幅の設定
     st.dataframe(
-        styled_df,
-        use_container_width=True,
-        hide_index=True,
-        height=800, # ここで高さを大きく固定（約25-30行が一度に見えます）
+        styled_df, 
+        use_container_width=True, 
+        hide_index=True, 
+        height=800,
         column_config={
-            "医薬品名": st.column_config.TextColumn("医薬品名", width="large"),
-            "変更項目": st.column_config.TextColumn("変更項目", width="medium"),
+            "医薬品名": st.column_config.TextColumn("医薬品名", width="medium"),
+            "頁": st.column_config.TextColumn("頁", width="small"),
+            "新規": st.column_config.TextColumn("新規", width="small"),
+            "改正": st.column_config.TextColumn("改正", width="small"),
+            "変更項目": st.column_config.TextColumn("変更項目", width="large"),
+            "カテゴリー": st.column_config.TextColumn("カテゴリー", width="small"),
         }
     )
-
+    
     csv = df_result.to_csv(index=False).encode('utf_8_sig')
-    st.download_button(label="📥 結果をCSVで保存", data=csv, file_name="results.csv", mime='text/csv')
+    st.download_button(label="📥 結果をCSVでダウンロード", data=csv, file_name="results.csv", mime='text/csv')
 else:
-    st.info("該当なし")
+    st.info("条件に一致する薬品はありません。")
+
+st.markdown("---")
+st.caption("Data Source: 第十九改正日本薬局方 収載・改正一覧表")
