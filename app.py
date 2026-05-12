@@ -64,6 +64,7 @@ st.markdown("""
         border-color: #adb5bd !important;
         z-index: 1;
     }
+    /* 表のヘッダー（題目）を中央揃えにする設定 */
     [data-testid="stDataFrame"] div[role="columnheader"] > div {
         justify-content: center !important;
         text-align: center !important;
@@ -91,10 +92,8 @@ def load_data():
         return df
     return pd.DataFrame()
 
-# --- 🎯 【完全自立型】索引データ定義 ---
-# CSVがない場合、この埋め込みデータを使って範囲計算を行います
+# --- 🎯 索引データ定義（CSV不要・完全自立型） ---
 def load_kana_bounds():
-    # 添付いただいたCSVの内容をプログラム内に保存
     idx_chem = {
         'ア': 1, 'イ': 142, 'ウ': 222, 'エ': 230, 'オ': 323, 'カ': 354, 'キ': 408, 'ク': 421, 'ケ': 515, 'コ': 536,
         'サ': 556, 'シ': 585, 'ス': 686, 'セ': 732, 'ソ': 816, 'タ': 825, 'チ': 862, 'ツ': 893, 'テ': 896, 'ト': 944,
@@ -130,19 +129,7 @@ def load_kana_bounds():
             cat_bounds[label] = (start_num, end_num)
         return cat_bounds
 
-    # CSVがあれば優先、なければ埋め込みデータを使用
     bounds = {"化学薬品等": build(idx_chem), "生薬等": build(idx_bio)}
-
-    # 【外部CSV読み込みチェック】もし外部CSVがあれば上書き（将来の更新用）
-    try:
-        if os.path.exists('第十九改正日本薬局方_カタカナ検索用_化学薬品等.csv'):
-            df_c = pd.read_csv('第十九改正日本薬局方_カタカナ検索用_化学薬品等.csv')
-            bounds["化学薬品等"] = build(dict(zip(df_c['カタカナ索引'], df_c['項番（行番号）'])))
-        if os.path.exists('第十九改正日本薬局方_カタカナ検索用_生薬等.csv'):
-            df_b = pd.read_csv('第十九改正日本薬局方_カタカナ検索用_生薬等.csv')
-            bounds["生薬等"] = build(dict(zip(df_b['カタカナ索引'], df_b['項番（行番号）'])))
-    except: pass
-
     return bounds
 
 def highlight_cells(val):
@@ -171,8 +158,11 @@ for i, label in enumerate(kana_labels):
 st.sidebar.header("⚙️ フィルター設定")
 selected_cats = [cat for cat in (df_raw['カテゴリー'].unique()) if st.sidebar.checkbox(cat, value=True)]
 only_new, only_revised = st.sidebar.checkbox("新規収載品のみ"), st.sidebar.checkbox("改正品目のみ")
+
 st.sidebar.subheader("行削除フィルタ")
-remove_chem, remove_seijo = st.sidebar.checkbox("「化学名」を含む行を削除"), st.sidebar.checkbox("「4.生薬の性状」を含む行を削除")
+remove_chem = st.sidebar.checkbox("「化学名」を含む行を削除")
+remove_seijo = st.sidebar.checkbox("「4.生薬の性状」を含む行を削除")
+remove_kanren = st.sidebar.checkbox("「関連表記」を含む行を削除") # 👈 追加
 
 # フィルタリング
 df_filtered = df_raw.copy()
@@ -192,8 +182,13 @@ if sel_kana != "全件表示":
             mask |= (df_filtered['カテゴリー'] == cat) & (kouban_num >= start) & (kouban_num < end)
     df_filtered = df_filtered[mask]
 
-if remove_chem: df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '化学薬品等') & (df_filtered['変更項目'].str.contains('化学名', na=False)))]
-if remove_seijo: df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '生薬等') & (df_filtered['変更項目'].str.contains('4.生薬の性状', na=False)))]
+# 行削除フィルタの適用
+if remove_chem:
+    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '化学薬品等') & (df_filtered['変更項目'].str.contains('化学名', na=False)))]
+if remove_seijo:
+    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '生薬等') & (df_filtered['変更項目'].str.contains('4.生薬の性状', na=False)))]
+if remove_kanren: # 👈 追加
+    df_filtered = df_filtered[~(df_filtered['変更項目'].str.contains('関連表記', na=False))]
 
 # 結果表示
 st.write(f"📊 検索結果: **{len(df_filtered)}** 件 / 選択中: {sel_kana}")
