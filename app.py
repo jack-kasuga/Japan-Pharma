@@ -18,48 +18,48 @@ DB_NAME = 'jp_pharmacopoeia.db'
 # ページの基本設定
 st.set_page_config(page_title="日本薬局方 検索システム", page_icon="📖", layout="wide")
 
-# CSSによるレイアウトの徹底調整
+# CSSによるレイアウト調整（効かないヘッダー用CSSを削除し軽量化）
 st.markdown("""
     <style>
-    /* 1. 全体の余白とタイトルの見切れ防止 */
+    /* 全体の余白とタイトルの見切れ防止 */
     .block-container {
-        padding-top: 4.0rem !important;
+        padding-top: 4.5rem !important;
         padding-bottom: 1rem !important;
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 1.0rem !important;
+        padding-right: 1.0rem !important;
     }
     .main-title {
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: bold;
         margin-bottom: 25px;
         color: #1E3A8A;
         line-height: 1.2;
     }
 
-    /* 2. ボタンの間隔を極限まで詰める設定 */
+    /* ボタンの間隔を限界まで詰める */
+    [data-testid="column"] {
+        padding: 0px !important;
+        margin: 0px !important;
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+    }
     [data-testid="stHorizontalBlock"] {
         gap: 0px !important;
     }
-    [data-testid="column"] {
-        flex: 1 1 0% !important;
-        width: auto !important;
-        min-width: 0 !important;
-        padding: 0px !important;
-        margin: 0px !important;
-    }
 
-    /* 3. ボタンのスタイル調整 */
+    /* ボタンのスタイル調整 */
     .stButton > button {
         width: 100% !important;
         border-radius: 0px !important;
-        height: 2.2em !important;
-        padding: 0px !important;
-        font-size: 0.85rem !important;
+        height: 2.4em !important;
+        padding: 0px 2px !important;
+        font-size: 0.75rem !important;
         background-color: #f8f9fa !important;
         border: 1px solid #ced4da !important;
         margin: 0px !important;
-        box-shadow: none !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
     }
     [data-testid="column"]:not(:last-child) .stButton > button {
         border-right: none !important;
@@ -68,12 +68,6 @@ st.markdown("""
         background-color: #e9ecef !important;
         border-color: #adb5bd !important;
         z-index: 1;
-    }
-
-    /* 4. 表のヘッダー（題目）を中央揃えにする */
-    div[data-testid="stDataFrame"] div[role="columnheader"] {
-        text-align: center !important;
-        justify-content: center !important;
     }
     </style>
     <h1 class="main-title">第十九改正日本薬局方 新規収載・改正品検索システム</h1>
@@ -111,17 +105,17 @@ if df_raw.empty:
     st.stop()
 
 if 'selected_kana' not in st.session_state:
-    st.session_state.selected_kana = "全件"
+    st.session_state.selected_kana = "全件表示"
 
 # --- メイン画面上部: 検索エリア ---
 search_word = st.text_input("🔍 検索", placeholder="品目名を入力してください", label_visibility="collapsed")
 
 # カタカナボタン
 kana_groups = {
-    "ア行": list("アイウエオ"), "カ行": list("カキクケコ"), "サ行": list("サシスセソ"),
-    "タ行": list("タチツテト"), "ナ行": list("ナニヌネノ"), "ハ行": list("ハヒフヘホ"),
-    "マ行": list("マミムメモ"), "ヤ行": list("ヤユヨ"), "ラ行": list("ラリルレロ"),
-    "ワ行": list("ワ"), "全件": "全件"
+    "ア行(ア～オ)": list("アイウエオ"), "カ行(カ～コ)": list("カキクケコ"), "サ行(サ～ソ)": list("サシスセソ"),
+    "タ行(タ～ト)": list("タチツテト"), "ナ行(ナ～ノ)": list("ナニヌネノ"), "ハ行(ハ～ホ)": list("ハヒフヘホ"),
+    "マ行(マ～モ)": list("マミムメモ"), "ヤ行(ヤ～ヨ)": list("ヤユヨ"), "ラ行(ラ～ロ)": list("ラリルレロ"),
+    "ワ行(ワ)": list("ワ"), "全件表示": "全件表示"
 }
 
 cols = st.columns(len(kana_groups))
@@ -149,7 +143,7 @@ if only_revised: df_filtered = df_filtered[df_filtered['改正'] == '〇']
 
 if search_word: df_filtered = df_filtered[df_filtered['医薬品名'].str.contains(search_word, na=False)]
 sel_kana = st.session_state.selected_kana
-if sel_kana != "全件":
+if sel_kana != "全件表示":
     df_filtered = df_filtered[df_filtered['医薬品名'].str[0].isin(kana_groups[sel_kana])]
 
 if '変更項目' in df_filtered.columns:
@@ -169,19 +163,18 @@ if not df_filtered.empty:
         highlight_cells, subset=['新規', '改正'] if '新規' in df_filtered.columns and '改正' in df_filtered.columns else []
     )
 
-    # 【修正：特定の列の中身を中央揃えに設定】
     st.dataframe(
         styled_df,
         use_container_width=True,
         hide_index=True,
         height=800,
         column_config={
-            "項番": st.column_config.Column(width=60),
-            "医薬品名": st.column_config.Column(width=500),
-            "頁": st.column_config.Column(width=50, alignment="center"),       # 中身を中央揃え
-            "新規": st.column_config.Column(width=50, alignment="center"),     # 中身を中央揃え
-            "改正": st.column_config.Column(width=50, alignment="center"),     # 中身を中央揃え
-            "カテゴリー": st.column_config.Column(width=100, alignment="center"), # 中身を中央揃え
+            "項番": st.column_config.Column(width=60, alignment="right"),
+            "医薬品名": st.column_config.Column(width=500, alignment="left"),
+            "頁": st.column_config.Column(width=50, alignment="center"),
+            "新規": st.column_config.Column(width=50, alignment="center"),
+            "改正": st.column_config.Column(width=50, alignment="center"),
+            "カテゴリー": st.column_config.Column(width=100, alignment="center"),
             "変更項目": st.column_config.Column(width="large"),
         }
     )
