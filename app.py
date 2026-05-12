@@ -177,7 +177,7 @@ st.sidebar.header("⚙️ フィルター設定")
 selected_cats = [cat for cat in (df_raw['カテゴリー'].unique()) if st.sidebar.checkbox(cat, value=True)]
 only_new, only_revised = st.sidebar.checkbox("新規収載品のみ"), st.sidebar.checkbox("改正品目のみ")
 
-st.sidebar.subheader("行非表示フィルタ")
+st.sidebar.subheader("行非表示フィルター")
 remove_chem = st.sidebar.checkbox("「化学名」を含む行を非表示")
 remove_seijo = st.sidebar.checkbox("「4.生薬の性状」を含む行を非表示")
 remove_kanren = st.sidebar.checkbox("「関連表記」を含む行を非表示")
