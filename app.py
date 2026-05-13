@@ -27,7 +27,7 @@ st.markdown("""
         font-weight: bold !important;
         margin-top: 10px !important; 
         margin-bottom: 25px !important;
-        color: #1E3A8A !important;
+        color: #000000 !important;
         line-height: 1.5 !important;
     }
     
