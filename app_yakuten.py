@@ -251,14 +251,14 @@ def main():
 
     # --- サイドバー：フィルタ ---
     st.sidebar.header("⚙ フィルター")
-    only_any_revised = st.sidebar.checkbox("いずれかの改正があった品目のみ表示")
+    only_any_revised = st.sidebar.checkbox("改正対象品目を全て表示")
     st.sidebar.markdown("---")
     st.sidebar.write("**特定の改正時期で絞り込む**")
     
-    c_new = st.sidebar.checkbox("新規収載のみ表示")
-    c_r1 = st.sidebar.checkbox("R1改正のみ表示")
-    c_r4 = st.sidebar.checkbox("R4改正のみ表示")
-    c_r6 = st.sidebar.checkbox("R6改正のみ表示")
+    c_new = st.sidebar.checkbox("新規収載品目を表示")
+    c_r1 = st.sidebar.checkbox("R1改正対象品目を表示")
+    c_r4 = st.sidebar.checkbox("R4改正対象品目を表示")
+    c_r6 = st.sidebar.checkbox("R6改正対象品目を表示")
 
     df_filtered = df.copy()
     if st.session_state.sel_kana != "全件表示":
