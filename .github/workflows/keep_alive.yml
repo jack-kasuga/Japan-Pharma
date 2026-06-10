@@ -2,8 +2,9 @@ name: Keep Streamlit Awake
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
-  workflow_dispatch:
+    # 1時間ごと（毎時0分）にこの自動化処理をトリガーします
+    - cron: '0 * * * *'
+  workflow_dispatch:      # 手動実行ボタン
 
 jobs:
   wake-up:
