@@ -1,0 +1,101 @@
+﻿コード,試験法名(日本語),JP番号,USP番号,EP番号,PDG 試験法名,全体調和ステータス,サインオフ日,施行日,🇯🇵 JP不採用項目,🇯🇵 JP独自例外,🇺🇸 USP不採用項目,🇺🇸 USP独自例外,🇪🇺 EP不採用項目,🇪🇺 EP独自例外,元ファイル名,IP番号,🇮🇳 IP不採用項目,🇮🇳 IP独自例外
+B-01,アミノ酸分析法,参考情報〈G3-2-171〉,<1052>,2.2.56,Amino Acid Analysis,調和（局間差異あり）,2026-03-24 (Rev.1 Corr.2),2027年（JP19第一追補予定）,なし,なし,なし,"脚注：
+「適切な標準物質は、NIST（メリーランド州ゲイザースバーグ）、Beckman Instruments（カリフォルニア州フラトン）、Sigma Chemical（ミズーリ州セントルイス）、Pierce（イリノイ州ロックフォード）、またはAgilent（カリフォルニア州パロアルト）から入手可能である。」付録（APPENDIX）",なし,なし,B01_Rev1_Corr2_2026_03_Sign-off.pdf,2.4.24,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+B-02,キャピラリー電気泳動法,参考情報〈G3-7-180〉,<1053>,2.2.47,Capillary Electrophoresis,完全調和,2026-03-24 (Rev.1),2027年（JP19第一追補予定）,なし,なし,なし,なし,なし,なし,B02_Rev1_2026_03_Sign-off.pdf,2.4.26,なし,IP採用（完全調和）。
+B-03,等電点電気泳動法,参考情報〈G3-6-142〉,<1054>,2.2.54,Isoelectric Focusing,完全調和,2002-09-09 (初回調和),2005-01-01 (JP14参考情報),なし,なし,なし,なし,なし,なし,B03 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code B03 Isoelectric focusing - September 2002.pdf,2.4.13,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+B-04,タンパク質定量法（計画削除）,参考情報〈G3-12-172〉,<1057>,2.5.33,Protein Determination,調和中止（非調和）,計画削除 (2017-09),ー（計画削除）,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。国内独自規定を継続適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。USP独自規定（<1057>）を適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。Ph. Eur. 独自規定（2.5.33）を適用。,,ー,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+B-05,ペプチドマップ法,参考情報〈G3-3-182〉,<1055>,2.2.55,Peptide Mapping,完全調和,2023-01-20 (Rev.1),2024-06-28 (JP18追補2),なし,なし,なし,なし,なし,なし,B05 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code B05 Peptide mapping - April 2023.pdf,2.4.25,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+B-06,SDSポリアクリルアミドゲル電気泳動法,参考情報〈G3-8-170〉,<1056>,2.2.31,Polyacrylamide Gel Electrophoresis,完全調和,2014-06-26 (Rev.1),2016-04-01 (JP17),なし,なし,なし,なし,なし,なし,B06 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code B06 Electrophoresis - June 2014.pdf,2.4.12,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-01,粒度測定法,3.04,<786>,2.9.38,Analytical Sieving,調和（局間差異あり）,2024-12-06 (Rev.1 Corr.1),2022-12-12 (JP18追補1),なし,導入部に以下の記述を追加：分析ふるい法は、粉末医薬品の粒度分布をふるいを用いて推定する方法である。本法により決定された粒子径は、粒子が通過する最小のふるいの目開きの寸法として示される。ここで「粉末」とは、多数の固体粒子の集合体を意味する。,なし,なし,なし,なし,G01_2024_11_Rev1_Corr1_cover_sheet_ver2_Sign-off.pdf,2.9.38,なし,IP採用（完全調和）。
+G-02,かさ密度測定法,3.01,<616>,2.9.34,Bulk Density of powders,調和（局間差異あり）,2024-06-18 (Rev.4 Corr.2),2024-06-28 (JP18追補2),導入部における「G-05（粉体流動性）の参照指示文」は不採用（日局本文には含めない）。,なし,なし,なし,なし,なし,G02 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G02 Bulk density of powders.pdf,2.9.34,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-03,導電率測定法,2.51,<645>,2.2.38,Conductivity,調和（局間差異あり）,2019-09-25 (Corr.1),2021-06-07 (JP18),"温度補償（Temperature Compensation）
+(1) 「(e.g. purified water, water for injection)」（例：精製水、注射用水）は JP には含まれない。   
+
+流体の導電率測定（Conductivity Measurement of Fluids）
+(2) 「at-line」（アットライン）は JP には含まれない。","次の文、「様々な溶液に対する非線形温度補償データは広く入手可能である（例：ISO 7888 水質－電気伝導率の測定に記載）。」が、次のように置き換えられる。   
+「非線形温度補償は、測定機器にあらかじめプログラムされたデータを用いて温度補償を行う。様々な溶液に対する非線形温度補償データは広く入手可能であり、例えば天然水や、微量のアンモニアを含む超純水に対するデータがある。」   ",なし,"1.「はじめに（Introduction）」において、第2文は以下のように記載されている。
+   「本章は、導電率が……である場合の他の流体への適用を意図している。」   
+
+2.「はじめに」の第1段落の最後の文に、以下の記述が追加される。  
+   「本章は、注射用水（Water for Injection）、精製水（Purified Water）、純蒸気凝縮水（Pure Steam condensate）、および無菌注射用水（Sterile Water for Injection）などの公定書収載の水におけるイオン純度を保証するために用いられる正式な手順である〈645〉導電率（Water Conductivity）に置き換わるものではない。」
+
+3.「はじめに」の第2段落の末尾に、以下の「注（NOTE）」が追加される。
+   「［注記―追加の背景情報については、〈1644〉溶液の電気伝導率測定の理論と実際（Theory and Practice of Electrical Conductivity Measurements of Solutions）を参照のこと。］」   ",なし,なし,G03 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G03 Conductivity Corr 1 - September 2019.pdf,2.4.9,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-04,粉体の粒子密度測定法,3.03,<699>,2.9.23,Gas Pycnometric Density of Solids,完全調和,2007-05-08 (Sign-off),2009-10-01 (JP15追補2),なし,なし,なし,なし,なし,なし,G04 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G04 Gas pycnometric density of solids - May 2007.pdf,2.9.23,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-05,粉体流動性測定法,参考情報〈G2-3-182〉,<1174>,2.9.36,Powder Flow,完全調和,2023-01-20 (Rev.1),2024-06-28 (JP18追補2),なし,なし,なし,なし,なし,なし,G05 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G05 Powder flow - April 2023.pdf,2.9.36,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-06,錠剤の摩損度試験法,参考情報〈G6-5-181〉,<1216>,2.9.7,Tablet Friability,完全調和,2024-05-24 (Rev.1 表紙ver.2),2022-12-12 (JP18追補1),なし,なし,なし,なし,なし,なし,G06 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G06 Friability of uncoated tablets.pdf,2.5.3,一部不採用項目あり（「-」あり）,非調和（IP不採用規定あり）。
+G-07,元素不純物,2.66,<232>/<233>,5.20 / 2.4.20,Elemental Impurities,調和（局間差異あり）,2024-06-19 (Sign-off),2026-04-10 (JP19),なし,"・導入部：バリデーション済み代替分析法の使用に関する注記追加。
+・分析手順1・2：試料原液への安定化剤添加は必須ではないことを明確化（「必要に応じて」追加）。装置のメモリー効果時の洗浄酸に関する記載。
+・バリデーション：不純物濃度に応じた基準変更の注記、日局既収載ICP法<2.63>との相違点の説明。
+・定量試験：定量限界（QL）の判定基準を「目標濃度の50%以下」と規定。
+・用語集：王水の定義追加、目標元素・目標限度等の文言差異、クロスバリデーションの定義。",なし,"・導入部：本章の目的に関する文、代替バリデーション法の注記を追加。
+・形態別分析（Speciation）セクションを追加。
+・用語変更：「Standard solution」を「Standardization solution」に変更。
+・用語集：濃酸の定義に王水を含む。",なし,"・試料調製：濃酸取扱い時の安全性に関する文を省略。器具選定（labware）の項を追加。
+・EP一般試験法各章への参照を追加。
+・用語変更：「Standardization」を「Calibration」に、「sample solution」を「test solution」に変更。
+・用語集：標準物質の入手可能性に関する文を追加。",G07 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G07 Elemental Impurities.pdf,2.4.20,なし,"・元素不純物の限度に関する詳細規定。
+・IP一般試験法各章への参照を追加。
+・試料調製：「Test solution preparation」への見出し変更、十分な試料量確保に関する注記追加。
+・用語変更：「Standard solution」を「Reference solution」に、「Sample solution」を「Test solution」に変更。"
+G-08,吸入剤の空気力学的粒度測定法（作業中止）,ー,<601>,2.9.18,Inhalation,調和中止（非調和）,作業中止,ー（作業中止）,全項目不採用（作業中止）,各局の装置要件（インパクター構造等）の不一致により調和作業中止。日局は一般試験法6.15を適用。,全項目不採用（作業中止）,USP独自規定（<601>）を適用。,全項目不採用（作業中止）,Ph. Eur. 独自規定（2.9.18）を適用。,,2.5.18,全項目不採用（作業中止）,非調和（合意文書にIP記載なし）。
+G-09,粒度測定法,3.04,<776>,2.9.37,Optical Microscopy,完全調和,2004-06-10 (Stage 4),2006-04-01 (JP15),なし,なし,なし,なし,なし,なし,G09 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G09 Optical microscopy - June 2004.pdf,2.9.37,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-10,粉体の細かさの表示法,参考情報〈G2-2-171〉,<846>,2.9.35,Powder Fineness,完全調和,2007-05-08 (Stage 4),2009-10-01 (JP15追補2),なし,なし,なし,なし,なし,なし,G10 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G10 Powder fineness - May 2007.pdf,2.9.35,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-11,比表面積測定法,3.02,<811>,2.9.8,Specific Surface Area,完全調和,2003-11-13 (Sign-off),2006-04-01 (JP15),なし,なし,なし,なし,なし,なし,G11 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G11 Specific surface area by gas adsorption - November 2003.pdf,2.9.8,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-12,水銀圧入ポロシメトリー法（作業中止）,ー,<267>,2.8.20,Porosimetry by Mercury Intrusion,調和中止（非調和）,作業中止,ー（作業中止）,全項目不採用（作業中止）,水銀の環境規制・安全性（水俣条約等）に伴いPDG協議中止。,全項目不採用（作業中止）,USP独自規定（<267>）を適用。,全項目不採用（作業中止）,Ph. Eur. 独自規定（2.8.20）を適用。,,ー,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-13,レーザー回折・散乱法による粒子径測定法,3.06,<429>,2.9.31,Laser Diffraction Measurement of Particle size,完全調和,2008-11-11 (初回調和),2017/12/1,なし,なし,なし,なし,なし,なし,G13 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G13 Particle size analysis by laser light diffraction - November 2008.pdf,2.9.31,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-14,粉末X線回折測定法,2.58,<941>,2.9.33,X-Ray Powder Diffraction,調和（局間差異あり）,2020-12-22 (Rev.1),2022-12-12 (JP18追補1),試料の調製およびマウント,なし,なし,なし,なし,なし,G14 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G14 Characterisation of crystalline and partially crystalline solids by X-ray powder diffraction (XRPD) - Dec.pdf,2.9.33,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-15,収着－脱着等温線測定法及び水分活性測定法,3.05,<1241>,2.9.39,Water-solid Interaction,調和（局間差異あり）,2009-10-27 (初回調和),2012/10/1,緒言（導入部）、吸着水の物理的状態,なし,なし,なし,なし,なし,G15 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G15 Water-solid Interactions determination of sorption-desorption isotherms and of water activity - October 2.pdf,2.9.39,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-16,熱分析法,2.52,<891>,2.2.34,Thermal Analysis,調和（局間差異あり）,2014-06-26 (Rev.1),2016-04-01 (JP17),なし,熱重量測定は「乾燥減量試験法 <2.41>」または「水分測定法 <2.48>」の代替法として使用できる。ただし、水分測定法の代替法として用いる場合は、検体に水以外の揮発性成分が含まれていないことを事前に確認しておく必要がある。,なし,なし,なし,なし,G16 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G16 Thermal analysis - June 2014.pdf,2.4.21,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-17,吸入剤の送達量均一性試験法（計画削除）,6.14,,,Uniformity of Delivered Dose of Inhalations,調和中止（非調和）,計画削除 (2017-09),ー（計画削除）,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。日局は一般試験法6.14（吸入剤の送達量均一性試験法）を適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。USP独自規定を適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。Ph. Eur. 独自規定（0671）を適用。,,,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-18,マイクロカロリメトリー法（計画削除）,ー,,2.2.61,Microcalorimetry,調和中止（非調和）,計画削除 (2017-09),ー（計画削除）,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。日局未収載（非調和）。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。USP独自規定を適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。Ph. Eur. 独自規定（2.2.61）を適用。,,,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-19,固体又は粉体の密度（計画削除）,参考情報〈G2-1-190〉,,2.2.42,Density of solids,調和中止（非調和）,計画削除 (2017-09),ー（計画削除）,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。日局では参考情報〈G2-1-190〉等に関連記載があるが国際調和からは除外。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。USP独自規定を適用。,全項目不採用（計画削除）,2017年9月にPDG作業計画から削除。Ph. Eur. 独自規定（2.2.42）を適用。,,,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+G-20,クロマトグラフィー総論,2.00,<621>,2.2.46,Chromatography,調和（局間差異あり）,2023-11-13 (Corr.1),2022-12-12 (JP18追補1) / Corr.1は未施行,"・薄層クロマトグラフィー（TLC）規定は不採用（日局に収載せず）。
+・システム適合性確保に関する一部補足文は不採用。","・導入部：既存の「液体クロマトグラフィー <2.01>」の取扱いに関する文を追加。
+・分離度：ベースライン分離の定義を追加。
+・システム適合性：各条規定の適合基準適用に関する文言を差し替え。
+・条件変更：バイオテクノロジー医薬品・生薬関連等の特定試験における条件変更の除外規定を追加。
+・流速調整：カラム内径変更後の流速調整に関する文言変更。",なし,"・導入部：最終段落を省略。
+・一般手順およびクロマトグラフィー用カラムに関するセクションを追加収載。
+・システム適合性：RSD要件に応じた注入回数の規定。
+・条件変更：移動相の混合例追加、グラジエントカラム寸法の文言差異。
+・検出器応答に関する文言差異。",なし,"・Ph. Eur.の各クロマトグラフィー一般試験法への参照を追加。
+・平面クロマトグラフィーにおける記号・用語の差異。
+・相対保持時間（RRT）を相対保持の同義語として規定せず。
+・S/N比算出法のガイダンスを追加。",G20 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G20 Chromatographic separation techniques (2.2.46).pdf,2.4.14,全項目不採用（調和対象外・合意文書にIP記載なし）,非調和（合意文書にIP記載なし）。
+G-21,動的光散乱法による液体中の粒子径測定法,3.07,<432>,2.9.50,Dynamic Light Scattering,完全調和,2023-06-14 (Corr.1),2024-06-28 (JP18追補2),なし,なし,なし,なし,なし,なし,G21 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code G21 Dynamic Light Scattering - June 2023.pdf,2.9.50,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-01,溶出試験法,6.10,<711>,2.9.3,Dissolution,調和（局間差異あり）,2019-10-02 (Rev.3 表紙Corr.),2010-10-01 (JP16),"・装置3（Apparatus 3）および関連手順
+・遅延放出性製剤（Delayed-release dosage forms）に関する関連手順および判定基準",・遅延放出性製剤（Delayed-release dosage forms）については、JP独自の異なる手順および判定基準を規定する。,なし,"・ゼラチンを含む製剤で架橋（cross-linking）の証拠による試験不適合が生じた場合、酵素を添加して試験を再実施できる。
+・溶出試験器のキャリブレーションにUSPキャリブレーターの使用を規定。
+・プール溶出（pooled dissolution）の手順と許容基準を規定。
+・装置1および2における大型ベッセル（2Lおよび4L）の使用を許容。",なし,・装置1または2の手順において、温度計を取り付けた状態でのバリデーションが実施されている場合、温度計を取り外さずに試験を実施することを許容する。,Q01 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q01 Dissolution test for solid dosage forms - October 2019.pdf,2.5.2,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-02,崩壊試験法,6.09,<701>,2.9.1,Disintegration,調和（局間差異あり）,2026-09-28 (Rev.2 Corr.1),2027-10 (JP19第一追補予定),なし,"・腸溶性製剤の手順および判定基準。
+・顆粒剤、シロップ用製剤、丸剤への適用拡大、ならびに各手順・判定基準。
+・装置の付属品に関する補足説明。
+・別段の規定がない限り浸漬液として水を使用。
+・別段の規定がない場合の各製剤の試験時間。
+・崩壊の定義に関する補足説明。",なし,"・顆粒剤への適用拡大。
+・遅延放出性錠剤・カプセル剤の手順および判定基準。
+・頬腔錠、舌下錠、懸濁用錠、溶解用錠、外用液用錠、口腔内崩壊錠、チュアブル錠の手順および判定基準。
+・発泡錠および発泡顆粒剤の手順および判定基準。",なし,なし,手動追加 (Q02_Sign-off.pdf),2.5.1,なし,"・塊剤（boluses）、膣坐剤（pessaries）、坐剤への適用拡大。
+・補助盤（ディスク）の省略規定。
+・膣坐剤および坐剤の手順・判定基準。"
+Q-03/04,製剤均一性試験法,6.02,<905>,2.9.40,Uniformity of Content/Mass,完全調和,2016-10-26 (Rev.2 Corr.1),2017-12-01 (JP17追補),なし,なし,なし,なし,なし,なし,Q03_04 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q03_04 Uniformity of dosage units Rev 2 Corr 1 - October 2016.pdf,2.5.4,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-05A,微生物限度試験法（特定微生物試験）,4.05,<62>,2.6.13,Tests for Specified Microorganism,完全調和,2008-06-05 (Rev.1),2009-03-31 (JP15追補1),なし,なし,なし,なし,なし,なし,Q05a - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q05a Microbial examination of non-sterile products test for specified micro-organisms - June 2006.pdf,2.2.9,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-05B,微生物限度試験法（生菌数試験）,4.05,<61>,2.6.12,Microbial Enumeration,完全調和,2023-08-22 (Rev.1 Corr.2),2026-04-10 (JP19予定),なし,なし,なし,なし,なし,なし,Q05b - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q05b Microbial enumeration of non-sterile products microbial enumeration tests - July 2023.pdf,2.2.10,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-05C,非無菌医薬品の微生物学的品質特性,参考情報〈G4-1-170〉,<1111>,5.1.4,Limits for Non-sterile Products,調和（局間差異あり）,2018-10-03 (表紙Corr.),2007-10-01 (JP15参考情報),なし,なし,なし,なし,なし,"・生きた微生物を有効成分とする製剤（生菌製剤等）には適用しない旨を規定。
+・天然由来原料を含む経口製剤（生薬除く）に対する基準を規定。
+・動物用医薬品添加飼料用プレミックスに対する基準を規定。",Q05c - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q05c Microbiological quality of non-sterile pharmaceutical preparations and substances for pharmaceutica (1).pdf,5.1.4,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-06,エンドトキシン試験法,4.01,<85>,2.6.14,Bacterial Endotoxins,調和（局間差異あり）,2026-05-01 (Rev.2 表紙ver.2),2012-10-01 (JP16追補),なし,なし,なし,なし,なし,組換えファクターC（rFC）を用いた蛍光エンドポイント法（Method G）をEP独自の非調和項目として追加。関連する記載が導入部およびセクション2、5、6、9に含まれる。,Q06_Rev2_cover_sheet_ver2_2026_04_Sign-off.pdf,2.2.3,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-07,液の色に関する機器測定法,参考情報〈G1-4-181〉,<71>,2.2.2,Color (instrumental method),調和（局間差異あり）,2019-06-24 (Rev.1),2022-12-12 (JP18追補1),なし,"等色関数と三刺激値（X, Y, Z）の関係式、およびJIS Z 8120: 2001に基づく可視放射波長範囲（下限360〜400 nm、上限760〜830 nm）の定義文を追加。",なし,なし,なし,第2.2.2章冒頭に使用した測定法（方法I、方法IIまたは方法III）を結果とともに報告する旨の指示文を追加。,Q07 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q07 Degree of coloration of liquids - June 2019.pdf,2.2.11,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-08,注射剤の採取容量試験法,6.05,<1>,2.9.17,Extractable Volume,調和（局間差異あり）,2010-11-09 (Rev.1 表紙更新),2005-07-21 (JP14追補),なし,なし,なし,USP <1> の「容器内容量」の項に無菌固形製剤の容量測定に関するガイダンスを国内追加テキストとして規定。,なし,なし,Q08 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q08 Test for extractable volume of parenteral preparations - November 2011.pdf,2.5.17,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-09,注射剤の不溶性微粒子試験法,6.07,<788>,2.9.19,Particulate Contamination,調和（局間差異あり）,2025-05-02 (Rev.2),2026-04-10 (JP19予定),なし,"装置の校正（キャリブレーション）セクションにより詳細な情報を規定。
+（※表示容量100 mL容器の製剤要件は局間非調和）",なし,"・放射性医薬品、灌流液専用製剤、ファイナルフィルター使用が指示された製剤の適用除外規定。
+・筋肉内・皮下投与注射液への適用。
+・微粒子（外因性/内因性/固有）の分類解説および<1788>参照。
+・USP Particle Count RSを用いたシステム適合性確認。
+・院内調剤用バルク製剤（25 mL以上）および2室型容器製品の試験・換算手順。
+・個別品目におけるより厳格な限度値設定の許容。
+（※表示容量100 mL容器の製剤要件は局間非調和）",なし,なし（※表示容量100 mL容器の製剤要件は局間非調和）,Q09 Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q09 Particulation contamination - sub-visible particles - June 2004.pdf,2.5.19,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-10,強熱残分試験法,2.44,<281>,2.4.14,Residue on Ignition,完全調和,2005-08-04 (Rev.2),2006-04-01 (JP15),なし,なし,なし,なし,なし,なし,Q10 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q10 Sulfated ash - August 2005.pdf,2.4.15,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
+Q-11,無菌試験法,4.06,<71>,2.6.1,Sterility Test,完全調和,2009-06-10 (Rev.1 Corr.3),2011-04-01 (JP16),なし,なし,なし,なし,なし,なし,Q11 - Official document - European Pharmacopoeia Pharmacopoeial discussion group Sign-off document Code Q11 Sterility Rev 1 Corr 3 - June 2009.pdf,2.2.11,全項目不採用（調和対象外・IP欄なし）,非調和（合意文書にIP記載なし）。
