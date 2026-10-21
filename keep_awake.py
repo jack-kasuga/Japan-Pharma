@@ -7,7 +7,8 @@ from selenium.webdriver.common.by import By
 # 自動で起こしたい対象のStreamlitアプリのURLリスト
 URLS = [
     "https://japan-pharma-19.streamlit.app/",
-    "https://jpe2018-kaisei.streamlit.app/"
+    "https://jpe2018-kaisei.streamlit.app/",
+    "https://4pharma-pdg-general.streamlit.app/"
 ]
 
 def wake_up_app(driver, url):
