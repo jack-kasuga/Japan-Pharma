@@ -8,7 +8,8 @@ from selenium.webdriver.common.by import By
 URLS = [
     "https://japan-pharma-19.streamlit.app/",
     "https://jpe2018-kaisei.streamlit.app/",
-    "https://4pharma-pdg-general.streamlit.app/"
+    "https://4pharma-pdg-general.streamlit.app/",
+    "https://4pharma-pdg-monograph.streamlit.app/"
 ]
 
 def wake_up_app(driver, url):
