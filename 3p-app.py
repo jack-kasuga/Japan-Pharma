@@ -6,6 +6,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="PDG 4局調和ステータス(試験法)",
+    page_icon="🌐",
     layout="wide",
     initial_sidebar_state="expanded",
 )
