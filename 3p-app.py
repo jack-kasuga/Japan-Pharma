@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    page_title="PDG 4局調和ステータス ダッシュボード",
+    page_title="PDG 4局調和ステータス(試験法)",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -260,7 +260,7 @@ def main():
     st.markdown(app_css, unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="custom-main-title">🌐 PDG 4局調和ステータス ダッシュボード</div>',
+        '<div class="custom-main-title">🌐 PDG 4局調和ステータス(試験法)</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
