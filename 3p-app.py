@@ -5,8 +5,9 @@ PDG 試験法 4局調和ステータス ダッシュボード
 - カード表示の一括開閉（🔼 すべて閉じる / 🔽 すべて開く）
 - 4局横並びカードレイアウト（タブ廃止）
 - 調和状況チェックボックスの双方向連動＆件数【〇】表示
+- 調和中止アイコンをバツマーク（❌）に変更
 - PDFファイル/サイトへのリンク表示機能
-- 【最適化】単一マスターCSV(pdg_extracted_3regions_ja.csv)の直接読み込み
+- 単一マスターCSV(pdg_extracted_3regions_ja.csv)の直接読み込み
 """
 
 import os
@@ -47,16 +48,22 @@ def load_data():
             else:
                 df["試験法名(英語)"] = "ー"
 
-        if "サインオフ日" not in df.columns: df["サインオフ日"] = "ー"
-        if "施行日" not in df.columns: df["施行日"] = "ー"
-        if "PMDA_PDF_URL" not in df.columns: df["PMDA_PDF_URL"] = "ー"
+        if "サインオフ日" not in df.columns:
+            df["サインオフ日"] = "ー"
+        if "施行日" not in df.columns:
+            df["施行日"] = "ー"
+        if "PMDA_PDF_URL" not in df.columns:
+            df["PMDA_PDF_URL"] = "ー"
 
         def extract_code_order(code):
             code_str = str(code).upper()
             prefix = 9
-            if code_str.startswith("B"): prefix = 1
-            elif code_str.startswith("G"): prefix = 2
-            elif code_str.startswith("Q"): prefix = 3
+            if code_str.startswith("B"):
+                prefix = 1
+            elif code_str.startswith("G"):
+                prefix = 2
+            elif code_str.startswith("Q"):
+                prefix = 3
             
             m = re.search(r"\d+", code_str)
             num = int(m.group()) if m else 999
@@ -128,7 +135,6 @@ def main():
     .icon-legend { font-size: 0.85rem; color: #4a5568; display: flex; gap: 15px; align-items: center; justify-content: flex-end; }
     .stCheckbox { margin-bottom: -10px; }
     [data-testid="stExpander"] summary p { font-size: 1.05rem !important; font-weight: 700 !important; color: #1e293b !important; }
-    .ip-note { font-size: 0.7rem; color: #64748b; white-space: nowrap; margin-top: 4px; display: inline-block; }
     </style>
     """
     st.markdown(app_css, unsafe_allow_html=True)
@@ -192,12 +198,18 @@ def main():
 
     st.sidebar.divider()
     with st.sidebar.expander("ℹ️ 参照版に関する注記", expanded=True):
-        st.markdown("""
-        * 🇯🇵 **JP**: JP19 / JP19追補
-        * 🇺🇸 **USP**: USP-NF 2026 (Issue 5)
-        * 🇪🇺 **EP**: 11th Ed.
-        * 🇮🇳 **IP**: IP 2022<br><span class="ip-note">&nbsp;&nbsp;&nbsp;&nbsp;*(※合意書にIP欄記載なしは「調和対象外」扱い)*</span>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            """
+* 🇯🇵 **JP**: JP19 / JP19追補
+* 🇺🇸 **USP**: USP-NF 2026 (Issue 5)
+* 🇪🇺 **EP**: 11th Ed.
+* 🇮🇳 **IP**: IP 2022
+<div style="font-size: 0.72rem; color: #64748b; margin-top: 6px; text-align: left;">
+    ※合意書にIP欄記載なしは「調和対象外」扱い
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     filtered_df = df.copy()
     if search_query:
@@ -207,7 +219,8 @@ def main():
             | filtered_df["試験法名(英語)"].astype(str).str.contains(search_query, case=False, na=False)
         )
         for c in [jp_no_col, usp_no_col, ep_no_col, ip_no_col]:
-            if c: mask = mask | filtered_df[c].astype(str).str.contains(search_query, case=False, na=False)
+            if c:
+                mask = mask | filtered_df[c].astype(str).str.contains(search_query, case=False, na=False)
         filtered_df = filtered_df[mask]
 
     if selected_statuses:
@@ -229,20 +242,27 @@ def main():
         st.caption(f"表示中: **{len(filtered_df)} / {len(df)} 件**")
     with col_info2:
         if view_mode == "🗂️ カード":
-            st.markdown("""
+            st.markdown(
+                """
             <div class="icon-legend">
                 <span>🌐 4局調和</span>
                 <span>✅ 3局完全調和</span>
                 <span>⚠️ 調和（局間差異あり）</span>
                 <span>❌ 調和中止</span>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
     display_cols = ["コード", "試験法名(日本語)"]
-    if jp_no_col: display_cols.append(jp_no_col)
-    if usp_no_col: display_cols.append(usp_no_col)
-    if ep_no_col: display_cols.append(ep_no_col)
-    if ip_no_col: display_cols.append(ip_no_col)
+    if jp_no_col:
+        display_cols.append(jp_no_col)
+    if usp_no_col:
+        display_cols.append(usp_no_col)
+    if ep_no_col:
+        display_cols.append(ep_no_col)
+    if ip_no_col:
+        display_cols.append(ip_no_col)
     
     display_cols += [
         "表示調和ステータス", "サインオフ日", "施行日",
@@ -259,19 +279,28 @@ def main():
             cells = []
             for col in cols_to_show:
                 val = str(row.get(col, "ー")).strip()
-                if not val or val == "nan": val = "ー"
+                if not val or val == "nan":
+                    val = "ー"
                 tooltip_val = html.escape(val, quote=True).replace("&#10;", "<br>").replace("\n", "<br>")
                 text_val = val.replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", " ")
 
-                if col == "コード": cells.append(f'<td class="sticky-col1">{text_val}</td>')
-                elif "試験法名" in col: cells.append(f'<td class="sticky-col2">{text_val}</td>')
-                elif col == jp_no_col: cells.append(f'<td class="col-num">{text_val.replace("参考情報", "参考情報<br>")}</td>')
-                elif col in [usp_no_col, ep_no_col, ip_no_col]: cells.append(f'<td class="col-num">{text_val}</td>')
+                if col == "コード":
+                    cells.append(f'<td class="sticky-col1">{text_val}</td>')
+                elif "試験法名" in col:
+                    cells.append(f'<td class="sticky-col2">{text_val}</td>')
+                elif col == jp_no_col:
+                    cells.append(f'<td class="col-num">{text_val.replace("参考情報", "参考情報<br>")}</td>')
+                elif col in [usp_no_col, ep_no_col, ip_no_col]:
+                    cells.append(f'<td class="col-num">{text_val}</td>')
                 elif col == "表示調和ステータス":
-                    if "4局調和" in val: badge_class = "status-badge-4p"
-                    elif "3局完全調和" in val: badge_class = "status-badge-3p"
-                    elif "中止" in val: badge_class = "status-badge-discontinued"
-                    else: badge_class = "status-badge-diff"
+                    if "4局調和" in val:
+                        badge_class = "status-badge-4p"
+                    elif "3局完全調和" in val:
+                        badge_class = "status-badge-3p"
+                    elif "中止" in val:
+                        badge_class = "status-badge-discontinued"
+                    else:
+                        badge_class = "status-badge-diff"
                     status_text = text_val.replace("（", "<br>（").replace("(", "<br>(")
                     cells.append(f'<td class="col-status"><span class="{badge_class}">{status_text}</span></td>')
                 elif col in ["サインオフ日", "施行日"]:
@@ -296,15 +325,23 @@ def main():
         th_cells = []
         for i, col in enumerate(cols_to_show):
             col_name = col
-            if col == "表示調和ステータス": col_name = "ステータス"
-            elif col == "試験法名(日本語)": col_name = "試験法名"
-            elif col == "サインオフ日": col_name = "サインオフ"
-            elif "不採用項目" in col: col_name = col.replace("不採用項目", " 不採用")
-            elif "独自例外" in col: col_name = col.replace("独自例外", " 例外")
+            if col == "表示調和ステータス":
+                col_name = "ステータス"
+            elif col == "試験法名(日本語)":
+                col_name = "試験法名"
+            elif col == "サインオフ日":
+                col_name = "サインオフ"
+            elif "不採用項目" in col:
+                col_name = col.replace("不採用項目", " 不採用")
+            elif "独自例外" in col:
+                col_name = col.replace("独自例外", " 例外")
 
-            if col == "コード": th_cells.append(f'<th class="sticky-col1" onclick="sortTable({i})">{col_name}</th>')
-            elif "試験法名" in col: th_cells.append(f'<th class="sticky-col2" onclick="sortTable({i})">{col_name}</th>')
-            else: th_cells.append(f'<th onclick="sortTable({i})">{col_name}</th>')
+            if col == "コード":
+                th_cells.append(f'<th class="sticky-col1" onclick="sortTable({i})">{col_name}</th>')
+            elif "試験法名" in col:
+                th_cells.append(f'<th class="sticky-col2" onclick="sortTable({i})">{col_name}</th>')
+            else:
+                th_cells.append(f'<th onclick="sortTable({i})">{col_name}</th>')
 
         table_sort_js = """
         <script>
@@ -348,27 +385,50 @@ def main():
 
         for _, row in filtered_df.iterrows():
             status_val = row.get("表示調和ステータス", "")
-            if "4局調和" in status_val: status_icon = "🌐"
-            elif "3局完全調和" in status_val: status_icon = "✅"
-            elif "中止" in status_val: status_icon = "❌"
-            else: status_icon = "⚠️"
+            if "4局調和" in status_val:
+                status_icon = "🌐"
+            elif "3局完全調和" in status_val:
+                status_icon = "✅"
+            elif "中止" in status_val:
+                status_icon = "❌"
+            else:
+                status_icon = "⚠️"
 
-            with st.expander(f"{row['コード']} : {row['試験法名(日本語)']} （{status_val}） {status_icon}", expanded=st.session_state["all_cards_test_exp"]):
+            with st.expander(
+                f"{row['コード']} : {row['試験法名(日本語)']} （{status_val}） {status_icon}",
+                expanded=st.session_state["all_cards_test_exp"],
+            ):
                 c_left, c_right = st.columns([3, 1])
 
                 with c_left:
                     m1, m2, m3 = st.columns(3)
-                    m1.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>英語名: <code style='font-size: 0.95rem;'>{row.get('試験法名(英語)', 'ー')}</code></div>", unsafe_allow_html=True)
-                    m2.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>サインオフ: <code style='font-size: 0.92rem;'>{row.get('サインオフ日', 'ー')}</code></div>", unsafe_allow_html=True)
-                    m3.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>日局施行: <code style='font-size: 0.92rem;'>{row.get('施行日', 'ー')}</code></div>", unsafe_allow_html=True)
+                    m1.markdown(
+                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>英語名: <code style='font-size: 0.95rem;'>{row.get('試験法名(英語)', 'ー')}</code></div>",
+                        unsafe_allow_html=True,
+                    )
+                    m2.markdown(
+                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>サインオフ: <code style='font-size: 0.92rem;'>{row.get('サインオフ日', 'ー')}</code></div>",
+                        unsafe_allow_html=True,
+                    )
+                    m3.markdown(
+                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>日局施行: <code style='font-size: 0.92rem;'>{row.get('施行日', 'ー')}</code></div>",
+                        unsafe_allow_html=True,
+                    )
                     
                     num_parts = []
-                    if jp_no_col and str(row.get(jp_no_col, "")) not in ["", "nan"]: num_parts.append(f"🇯🇵 JP: `{row[jp_no_col]}`")
-                    if usp_no_col and str(row.get(usp_no_col, "")) not in ["", "nan"]: num_parts.append(f"🇺🇸 USP: `{row[usp_no_col]}`")
-                    if ep_no_col and str(row.get(ep_no_col, "")) not in ["", "nan"]: num_parts.append(f"🇪🇺 EP: `{row[ep_no_col]}`")
-                    if ip_no_col and str(row.get(ip_no_col, "")) not in ["", "nan"]: num_parts.append(f"🇮🇳 IP: `{row[ip_no_col]}`")
+                    if jp_no_col and str(row.get(jp_no_col, "")) not in ["", "nan"]:
+                        num_parts.append(f"🇯🇵 JP: `{row[jp_no_col]}`")
+                    if usp_no_col and str(row.get(usp_no_col, "")) not in ["", "nan"]:
+                        num_parts.append(f"🇺🇸 USP: `{row[usp_no_col]}`")
+                    if ep_no_col and str(row.get(ep_no_col, "")) not in ["", "nan"]:
+                        num_parts.append(f"🇪🇺 EP: `{row[ep_no_col]}`")
+                    if ip_no_col and str(row.get(ip_no_col, "")) not in ["", "nan"]:
+                        num_parts.append(f"🇮🇳 IP: `{row[ip_no_col]}`")
                     if num_parts:
-                        st.markdown(f"<div style='font-size: 0.85rem; color: #475569;'>局方番号 | {' ｜ '.join(num_parts)}</div>", unsafe_allow_html=True)
+                        st.markdown(
+                            f"<div style='font-size: 0.85rem; color: #475569;'>局方番号 | {' ｜ '.join(num_parts)}</div>",
+                            unsafe_allow_html=True,
+                        )
 
                 with c_right:
                     pmda_url = str(row.get("PMDA_PDF_URL", "")).strip()
@@ -394,31 +454,41 @@ def main():
                 def render_card_item(val, default_type="info"):
                     v_str = str(val).strip()
                     if v_str not in ["なし", "ー", "", "nan"]:
-                        if default_type == "warning": st.warning(v_str)
-                        else: st.info(v_str)
+                        if default_type == "warning":
+                            st.warning(v_str)
+                        else:
+                            st.info(v_str)
                     else:
                         st.write("なし")
 
                 r1_jp, r1_usp, r1_ep, r1_ip = st.columns(4)
                 with r1_jp:
-                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇯🇵 JP不採用項目", "なし"), "warning")
+                    st.markdown(lbl_not, unsafe_allow_html=True)
+                    render_card_item(row.get("🇯🇵 JP不採用項目", "なし"), "warning")
                 with r1_usp:
-                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇺🇸 USP不採用項目", "なし"), "warning")
+                    st.markdown(lbl_not, unsafe_allow_html=True)
+                    render_card_item(row.get("🇺🇸 USP不採用項目", "なし"), "warning")
                 with r1_ep:
-                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇪🇺 EP不採用項目", "なし"), "warning")
+                    st.markdown(lbl_not, unsafe_allow_html=True)
+                    render_card_item(row.get("🇪🇺 EP不採用項目", "なし"), "warning")
                 with r1_ip:
-                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇮🇳 IP不採用項目", "なし"), "warning")
+                    st.markdown(lbl_not, unsafe_allow_html=True)
+                    render_card_item(row.get("🇮🇳 IP不採用項目", "なし"), "warning")
 
                 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
                 r2_jp, r2_usp, r2_ep, r2_ip = st.columns(4)
                 with r2_jp:
-                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇯🇵 JP独自例外", "なし"), "info")
+                    st.markdown(lbl_exc, unsafe_allow_html=True)
+                    render_card_item(row.get("🇯🇵 JP独自例外", "なし"), "info")
                 with r2_usp:
-                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇺🇸 USP独自例外", "なし"), "info")
+                    st.markdown(lbl_exc, unsafe_allow_html=True)
+                    render_card_item(row.get("🇺🇸 USP独自例外", "なし"), "info")
                 with r2_ep:
-                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇪🇺 EP独自例外", "なし"), "info")
+                    st.markdown(lbl_exc, unsafe_allow_html=True)
+                    render_card_item(row.get("🇪🇺 EP独自例外", "なし"), "info")
                 with r2_ip:
-                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇮🇳 IP独自例外", "なし"), "info")
+                    st.markdown(lbl_exc, unsafe_allow_html=True)
+                    render_card_item(row.get("🇮🇳 IP独自例外", "なし"), "info")
 
 if __name__ == "__main__":
     main()
