@@ -6,15 +6,13 @@ PDG 医薬品各条（添加物）4局調和ステータス ダッシュボー�
 - 4局横並びの段ずれ完全解消（水平同期）
 - 【不採用項目】【独自例外】見出しの視認性強化
 - 調和状況チェックボックスの双方向連動＆件数【〇】表示
-- 表題: 🌐 PDG 4局調和ステータス(医薬品添加物)
 - E-55 3段表示・セル幅最適化
-実行方法: streamlit run app_excipients.py
+- 【最適化】単一マスターCSV(pdg_excipients_3regions_ja.csv)の直接読み込み
 """
 
 import os
 import re
 import html
-import base64
 import pandas as pd
 import streamlit as st
 
@@ -25,8 +23,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-PDF_DIR = "pdf_files"
-
 def find_col(columns, keywords):
     for c in columns:
         for kw in keywords:
@@ -36,20 +32,9 @@ def find_col(columns, keywords):
 
 @st.cache_data
 def load_data():
-    candidates = [
-        "pdg_excipients_3regions_ja_6.csv",
-        "pdg_excipients_3regions_ja_5.csv",
-        "pdg_excipients_3regions_ja_3.csv",
-        "pdg_excipients_3regions_ja_2.csv",
-        "pdg_excipients_3regions_ja.csv",
-    ]
-    target_csv = None
-    for cand in candidates:
-        if os.path.exists(cand):
-            target_csv = cand
-            break
+    target_csv = "pdg_excipients_3regions_ja.csv"
 
-    if target_csv is None:
+    if not os.path.exists(target_csv):
         return pd.DataFrame()
 
     try:
@@ -69,14 +54,10 @@ def load_data():
             en_col = find_col(df.columns, ["pdg", "英語名", "英名"])
             df["PDG 品目名"] = df[en_col] if en_col else "ー"
 
-        if "全体調和ステータス" not in df.columns:
-            df["全体調和ステータス"] = "調和（局間差異あり）"
-        if "非調和属性" not in df.columns:
-            df["非調和属性"] = "なし"
-        if "サインオフ日" not in df.columns:
-            df["サインオフ日"] = "ー"
-        if "施行日" not in df.columns:
-            df["施行日"] = "ー"
+        if "全体調和ステータス" not in df.columns: df["全体調和ステータス"] = "調和（局間差異あり）"
+        if "非調和属性" not in df.columns: df["非調和属性"] = "なし"
+        if "サインオフ日" not in df.columns: df["サインオフ日"] = "ー"
+        if "施行日" not in df.columns: df["施行日"] = "ー"
 
         def extract_num(val):
             m = re.search(r"\d+", str(val))
@@ -109,235 +90,65 @@ def load_data():
 def main():
     app_css = """
     <style>
-    .block-container {
-        padding-top: 0.2rem !important;
-        padding-bottom: 1.5rem !important;
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
-    }
-    header[data-testid="stHeader"] {
-        background-color: transparent !important;
-        height: 2.2rem !important;
-    }
-    .custom-main-title {
-        font-size: 1.75rem !important;
-        font-weight: 800 !important;
-        color: #1a202c !important;
-        text-align: center !important;
-        margin-top: 0px !important;
-        margin-bottom: 2px !important;
-        line-height: 1.3 !important;
-    }
-    .custom-main-caption {
-        font-size: 0.85rem !important;
-        color: #64748b !important;
-        text-align: center !important;
-        margin-top: 0px !important;
-        margin-bottom: 8px !important;
-    }
+    .block-container { padding-top: 0.2rem !important; padding-bottom: 1.5rem !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    header[data-testid="stHeader"] { background-color: transparent !important; height: 2.2rem !important; }
+    .custom-main-title { font-size: 1.75rem !important; font-weight: 800 !important; color: #1a202c !important; text-align: center !important; margin-top: 0px !important; margin-bottom: 2px !important; line-height: 1.3 !important; }
+    .custom-main-caption { font-size: 0.85rem !important; color: #64748b !important; text-align: center !important; margin-top: 0px !important; margin-bottom: 8px !important; }
     
-    .custom-table-container {
-        max-height: calc(100vh - 160px);
-        overflow-y: auto;
-        overflow-x: auto;
-        border: 1px solid #d0d7de;
-        border-radius: 8px;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-        background-color: #ffffff;
-    }
-    .custom-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12.5px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    .custom-table th {
-        position: sticky;
-        top: 0;
-        background-color: #f6f8fa;
-        color: #24292f;
-        font-weight: 600;
-        padding: 7px 8px;
-        border-bottom: 2px solid #d0d7de;
-        border-right: 1px solid #eaeef2;
-        white-space: nowrap;
-        text-align: center;
-        z-index: 2;
-        user-select: none;
-    }
+    .custom-table-container { max-height: calc(100vh - 160px); overflow-y: auto; overflow-x: auto; border: 1px solid #d0d7de; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); background-color: #ffffff; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .custom-table th { position: sticky; top: 0; background-color: #f6f8fa; color: #24292f; font-weight: 600; padding: 7px 8px; border-bottom: 2px solid #d0d7de; border-right: 1px solid #eaeef2; white-space: nowrap; text-align: center; z-index: 2; user-select: none; }
     .custom-table th:hover { background-color: #eaeef2; }
-    .custom-table td {
-        padding: 6px 8px;
-        border-bottom: 1px solid #eaeef2;
-        border-right: 1px solid #f0f3f6;
-        color: #24292f;
-        vertical-align: middle;
-        text-align: center;
-    }
+    .custom-table td { padding: 6px 8px; border-bottom: 1px solid #eaeef2; border-right: 1px solid #f0f3f6; color: #24292f; vertical-align: middle; text-align: center; }
     .custom-table tr:hover td { background-color: #f8fafc; }
     
-    .sticky-col1 {
-        position: sticky !important;
-        left: 0;
-        min-width: 60px;
-        max-width: 60px;
-        white-space: nowrap;
-        font-weight: 600;
-        text-align: center;
-        box-sizing: border-box;
-    }
-    .sticky-col2 {
-        position: sticky !important;
-        left: 60px;
-        min-width: 230px; 
-        box-shadow: 3px 0 5px -2px rgba(0,0,0,0.1);
-        box-sizing: border-box;
-    }
-    .custom-table td.sticky-col1, .custom-table td.sticky-col2 {
-        background-color: #fff;
-        z-index: 1;
-    }
-    .custom-table th.sticky-col1, .custom-table th.sticky-col2 {
-        background-color: #f6f8fa !important;
-        z-index: 4 !important;
-    }
-    .custom-table tr:hover td.sticky-col1, .custom-table tr:hover td.sticky-col2 {
-        background-color: #f2f7fc;
-    }
+    .sticky-col1 { position: sticky !important; left: 0; min-width: 60px; max-width: 60px; white-space: nowrap; font-weight: 600; text-align: center; box-sizing: border-box; }
+    .sticky-col2 { position: sticky !important; left: 60px; min-width: 230px; box-shadow: 3px 0 5px -2px rgba(0,0,0,0.1); box-sizing: border-box; }
+    .custom-table td.sticky-col1, .custom-table td.sticky-col2 { background-color: #fff; z-index: 1; }
+    .custom-table th.sticky-col1, .custom-table th.sticky-col2 { background-color: #f6f8fa !important; z-index: 4 !important; }
+    .custom-table tr:hover td.sticky-col1, .custom-table tr:hover td.sticky-col2 { background-color: #f2f7fc; }
     
     .col-status { white-space: normal; text-align: center; line-height: 1.35; min-width: 155px; } 
     .col-date { white-space: normal; text-align: center; font-size: 12px; line-height: 1.35; min-width: 125px; } 
     .col-detail { white-space: nowrap; text-align: center; min-width: 80px; position: relative; }
     
-    .sub-text {
-        font-size: 0.7rem;
-        color: #57606a;
-        display: block;
-        margin-top: 2px;
-    }
+    .sub-text { font-size: 0.7rem; color: #57606a; display: block; margin-top: 2px; }
 
-    .popup-container {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        outline: none;
-    }
-    .text-red-active {
-        color: #ff0000 !important;
-        font-weight: 700;
-        font-size: 13px;
-        text-decoration: none !important;
-        padding: 2px 6px;
-    }
-    .text-gray-active {
-        color: #64748b !important;
-        font-weight: 600;
-        font-size: 12px;
-        text-decoration: none !important;
-        padding: 2px 4px;
-    }
+    .popup-container { position: relative; display: inline-block; cursor: pointer; outline: none; }
+    .text-red-active { color: #ff0000 !important; font-weight: 700; font-size: 13px; text-decoration: none !important; padding: 2px 6px; }
+    .text-gray-active { color: #64748b !important; font-weight: 600; font-size: 12px; text-decoration: none !important; padding: 2px 4px; }
 
-    /* ★調和作業中 共通統一バッジ（ステータス・日付・詳細で完全一致） */
-    .badge-in-progress {
-        background-color: #ede9fe !important;
-        color: #5b21b6 !important;
-        border: 1px solid #c4b5fd !important;
-        padding: 3px 8px !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 600 !important;
-        display: inline-block !important;
-        line-height: 1.35 !important;
-        white-space: nowrap !important;
-        box-sizing: border-box !important;
-    }
+    .badge-in-progress { background-color: #ede9fe !important; color: #5b21b6 !important; border: 1px solid #c4b5fd !important; padding: 3px 8px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 600 !important; display: inline-block !important; line-height: 1.35 !important; white-space: nowrap !important; box-sizing: border-box !important; }
     .text-none { color: #8c959f; font-size: 12px; }
 
-    .popup-content {
-        visibility: hidden;
-        width: 450px;
-        background-color: #fff;
-        color: #333;
-        text-align: left;
-        border-radius: 6px;
-        padding: 12px;
-        position: absolute;
-        z-index: 100;
-        top: 125%; 
-        left: 50%;
-        margin-left: -225px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        border: 1px solid #ccc;
-        opacity: 0;
-        transition: opacity 0.2s;
-        white-space: normal;
-        font-weight: normal;
-        line-height: 1.4;
-    }
-    .popup-content::after {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: transparent transparent #ccc transparent;
-    }
-
-    .popup-container:focus .popup-content,
-    .popup-container:focus-within .popup-content,
-    .popup-container:active .popup-content,
-    .popup-container:hover .popup-content {
-        visibility: visible;
-        opacity: 1;
-    }
+    .popup-content { visibility: hidden; width: 450px; background-color: #fff; color: #333; text-align: left; border-radius: 6px; padding: 12px; position: absolute; z-index: 100; top: 125%; left: 50%; margin-left: -225px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #ccc; opacity: 0; transition: opacity 0.2s; white-space: normal; font-weight: normal; line-height: 1.4; }
+    .popup-content::after { content: ""; position: absolute; bottom: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: transparent transparent #ccc transparent; }
+    .popup-container:focus .popup-content, .popup-container:focus-within .popup-content, .popup-container:active .popup-content, .popup-container:hover .popup-content { visibility: visible; opacity: 1; }
 
     .status-badge-4p { background-color: #ddf4ff; color: #0969da; border: 1px solid #54aeff; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-block; line-height: 1.3; }
     .status-badge-3p { background-color: #dafbe1; color: #1a7f37; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 500; display: inline-block; line-height: 1.3; }
     .status-badge-diff { background-color: #fff8c5; color: #9a6700; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 500; display: inline-block; line-height: 1.3; }
     .status-badge-discontinued { background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-block; line-height: 1.3; }
 
-    .icon-legend {
-        font-size: 0.85rem;
-        color: #4a5568;
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        justify-content: flex-end;
-    }
-    
+    .icon-legend { font-size: 0.85rem; color: #4a5568; display: flex; gap: 15px; align-items: center; justify-content: flex-end; }
     .stCheckbox { margin-bottom: -10px; }
-
-    [data-testid="stExpander"] summary p {
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-        color: #1e293b !important;
-    }
+    [data-testid="stExpander"] summary p { font-size: 1.05rem !important; font-weight: 700 !important; color: #1e293b !important; }
     </style>
     """
     st.markdown(app_css, unsafe_allow_html=True)
 
-    st.markdown(
-        '<div class="custom-main-title">🌐 PDG 4局調和ステータス(医薬品添加物)</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="custom-main-caption">日本薬局方(JP)、米国薬局方(USP)、欧州薬局方(EP)、インド薬局方(IP)の4局における添加物モノグラフの調和状況およびローカル要件一覧</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="custom-main-title">🌐 PDG 4局調和ステータス(医薬品添加物)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="custom-main-caption">日本薬局方(JP)、米国薬局方(USP)、欧州薬局方(EP)、インド薬局方(IP)の4局における添加物モノグラフの調和状況およびローカル要件一覧</div>', unsafe_allow_html=True)
 
     df = load_data()
     if df.empty:
-        st.warning("表示できるデータがありません。CSVファイルを確認してください。")
+        st.warning("表示できるデータがありません。マスターデータ(pdg_excipients_3regions_ja.csv)を確認してください。")
         return
 
     st.sidebar.header("⚙️ 検索・設定")
     search_query = st.sidebar.text_input("🔍 検索", "", placeholder="コード、品目名など")
 
     st.sidebar.markdown("**調和状況**")
-    
     status_options = [
         "4局調和（IP反映済）",
         "3局完全調和（IP未反映）",
@@ -345,7 +156,6 @@ def main():
         "調和作業中",
         "調和中止（非調和）",
     ]
-
     status_counts = df["表示調和ステータス"].value_counts().to_dict()
     total_count = len(df)
 
@@ -365,43 +175,29 @@ def main():
         all_checked = all(st.session_state.get(f"cb_{opt}", False) for opt in status_options)
         st.session_state["cb_all"] = all_checked
 
-    st.sidebar.checkbox(
-        f"すべて【{total_count}】",
-        key="cb_all",
-        on_change=on_all_change
-    )
+    st.sidebar.checkbox(f"すべて【{total_count}】", key="cb_all", on_change=on_all_change)
 
     selected_statuses = []
     for opt in status_options:
         count = status_counts.get(opt, 0)
-        is_chk = st.sidebar.checkbox(
-            f"{opt}【{count}】",
-            key=f"cb_{opt}",
-            on_change=on_item_change
-        )
+        is_chk = st.sidebar.checkbox(f"{opt}【{count}】", key=f"cb_{opt}", on_change=on_item_change)
         if is_chk:
             selected_statuses.append(opt)
 
     st.sidebar.markdown("<br>", unsafe_allow_html=True)
-
     sort_options = ["コード順（E-01 → E-72）", "最新サインオフ日順", "施行時期順", "品目名順"]
     selected_sort = st.sidebar.selectbox("並び替え", sort_options)
 
-    view_mode = st.sidebar.radio(
-        "表示スタイル", ["📊 一覧表", "🗂️ カード"], horizontal=True, key="app_view_toggle"
-    )
+    view_mode = st.sidebar.radio("表示スタイル", ["📊 一覧表", "🗂️ カード"], horizontal=True, key="app_view_toggle")
 
     st.sidebar.divider()
     with st.sidebar.expander("ℹ️ 参照版に関する注記", expanded=True):
-        st.markdown(
-            """
-            * 🇯🇵 **JP**: JP18 / JP19追補
-            * 🇺🇸 **USP**: USP-NF 2026
-            * 🇪🇺 **EP**: 11th Ed.
-            * 🇮🇳 **IP**: IP 2022<br><span style="font-size:0.7rem;color:#64748b;">&nbsp;&nbsp;&nbsp;&nbsp;*(※合意書にIP欄なしは「調和対象外」扱い)*</span>
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown("""
+        * 🇯🇵 **JP**: JP18 / JP19追補
+        * 🇺🇸 **USP**: USP-NF 2026
+        * 🇪🇺 **EP**: 11th Ed.
+        * 🇮🇳 **IP**: IP 2022<br><span style="font-size:0.7rem;color:#64748b;">&nbsp;&nbsp;&nbsp;&nbsp;*(※合意書にIP欄なしは「調和対象外」扱い)*</span>
+        """, unsafe_allow_html=True)
 
     filtered_df = df.copy()
     if search_query:
@@ -436,40 +232,28 @@ def main():
         st.caption(f"表示中: **{len(filtered_df)} / {len(df)} 件**")
     with col_info2:
         if view_mode == "🗂️ カード":
-            st.markdown(
-                """
-                <div class="icon-legend">
-                    <span>🌐 4局調和</span>
-                    <span>✅ 3局完全調和</span>
-                    <span>⚠️ 調和（局間差異あり）</span>
-                    <span>🟣 作業中</span>
-                    <span>⏹️ 調和中止</span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            st.markdown("""
+            <div class="icon-legend">
+                <span>🌐 4局調和</span>
+                <span>✅ 3局完全調和</span>
+                <span>⚠️ 調和（局間差異あり）</span>
+                <span>🟣 作業中</span>
+                <span>❌ 調和中止</span>
+            </div>
+            """, unsafe_allow_html=True)
 
     display_columns = [
-        ("コード", "コード"),
-        ("品目名(日本語)", "品目名"),
-        ("表示調和ステータス", "ステータス"),
-        ("サインオフ日", "サインオフ"),
-        ("施行日", "施行日"),
-        ("非調和属性", "非調和属性"),
-        ("🇯🇵 JP不採用項目", "JP 不採用"),
-        ("🇯🇵 JP独自例外", "JP 例外"),
-        ("🇺🇸 USP不採用項目", "US USP 不採用"),
-        ("🇺🇸 USP独自例外", "US USP 例外"),
-        ("🇪🇺 EP不採用項目", "EU EP 不採用"),
-        ("🇪🇺 EP独自例外", "EU EP 例外"),
-        ("🇮🇳 IP不採用項目", "IN IP 不採用"),
-        ("🇮🇳 IP独自例外", "IN IP 例外"),
+        ("コード", "コード"), ("品目名(日本語)", "品目名"), ("表示調和ステータス", "ステータス"),
+        ("サインオフ日", "サインオフ"), ("施行日", "施行日"), ("非調和属性", "非調和属性"),
+        ("🇯🇵 JP不採用項目", "JP 不採用"), ("🇯🇵 JP独自例外", "JP 例外"),
+        ("🇺🇸 USP不採用項目", "US USP 不採用"), ("🇺🇸 USP独自例外", "US USP 例外"),
+        ("🇪🇺 EP不採用項目", "EU EP 不採用"), ("🇪🇺 EP独自例外", "EU EP 例外"),
+        ("🇮🇳 IP不採用項目", "IN IP 不採用"), ("🇮🇳 IP独自例外", "IN IP 例外"),
     ]
 
     def format_split_text(val):
         val = str(val)
-        if val in ["なし", "ー", "", "nan", "None"]:
-            return val
+        if val in ["なし", "ー", "", "nan", "None"]: return val
             
         third_line = ""
         target_str = "(gelling grade and non-gelling grade)"
@@ -497,16 +281,12 @@ def main():
 
             for col_key, _ in display_columns:
                 val = str(row.get(col_key, "ー")).strip()
-                if not val or val == "nan":
-                    val = "ー"
-
+                if not val or val == "nan": val = "ー"
                 tooltip_val = html.escape(val, quote=True).replace("&#10;", "<br>").replace("\n", "<br>")
                 text_val = val.replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", " ")
 
-                if col_key == "コード":
-                    cells.append(f'<td class="sticky-col1">{text_val}</td>')
-                elif col_key == "品目名(日本語)":
-                    cells.append(f'<td class="sticky-col2">{text_val}</td>')
+                if col_key == "コード": cells.append(f'<td class="sticky-col1">{text_val}</td>')
+                elif col_key == "品目名(日本語)": cells.append(f'<td class="sticky-col2">{text_val}</td>')
                 elif col_key == "表示調和ステータス":
                     if is_in_progress_row or "作業中" in val:
                         cells.append('<td class="col-status"><span class="badge-in-progress">調和作業中</span></td>')
@@ -521,8 +301,7 @@ def main():
                     if is_in_progress_row or "作業中" in val:
                         cells.append('<td class="col-date"><span class="badge-in-progress">調和作業中</span></td>')
                     else:
-                        formatted_date = format_split_text(text_val)
-                        cells.append(f'<td class="col-date">{formatted_date}</td>')
+                        cells.append(f'<td class="col-date">{format_split_text(text_val)}</td>')
                 else:
                     if is_in_progress_row or "作業中" in val:
                         cells.append(f'<td class="col-detail"><div class="popup-container" tabindex="0"><span class="badge-in-progress">調和作業中</span><span class="popup-content"><b>【詳細】</b><br>{tooltip_val if tooltip_val not in ["なし", "ー"] else "調和作業中（合意文書未策定）"}</span></div></td>')
@@ -539,14 +318,7 @@ def main():
 
             html_rows.append(f"<tr>{''.join(cells)}</tr>")
 
-        full_html = (
-            f'<div class="custom-table-container">'
-            f'<table class="custom-table">'
-            f'<thead><tr>{th_html}</tr></thead>'
-            f'<tbody>{"".join(html_rows)}</tbody>'
-            f'</table>'
-            f'</div>'
-        )
+        full_html = f'<div class="custom-table-container"><table class="custom-table"><thead><tr>{th_html}</tr></thead><tbody>{"".join(html_rows)}</tbody></table></div>'
         st.markdown(full_html, unsafe_allow_html=True)
 
     elif view_mode == "🗂️ カード":
@@ -570,61 +342,35 @@ def main():
             if "4局調和" in status_val: icon = "🌐"
             elif "3局完全調和" in status_val: icon = "✅"
             elif "作業中" in status_val: icon = "🟣"
-            elif "中止" in status_val: icon = "⏹️"
+            elif "中止" in status_val: icon = "❌"
             else: icon = "⚠️"
 
-            with st.expander(
-                f"{row['コード']} : {row['品目名(日本語)']} （{status_val}） {icon}",
-                expanded=st.session_state["all_cards_expanded"]
-            ):
+            with st.expander(f"{row['コード']} : {row['品目名(日本語)']} （{status_val}） {icon}", expanded=st.session_state["all_cards_expanded"]):
                 c_left, c_right = st.columns([3, 1])
 
                 with c_left:
                     m1, m2, m3 = st.columns(3)
-                    
                     sign_val = row.get('サインオフ日', 'ー')
                     eff_val = row.get('施行日', 'ー')
                     
-                    if status_val == "調和作業中" or "作業中" in str(sign_val):
-                        sign_disp = "<span class='badge-in-progress'>調和作業中</span>"
-                    else:
-                        sign_disp = f"<code style='font-size: 0.92rem;'>{sign_val}</code>"
+                    sign_disp = "<span class='badge-in-progress'>調和作業中</span>" if status_val == "調和作業中" or "作業中" in str(sign_val) else f"<code style='font-size: 0.92rem;'>{sign_val}</code>"
+                    eff_disp = "<span class='badge-in-progress'>調和作業中</span>" if status_val == "調和作業中" or "作業中" in str(eff_val) else f"<code style='font-size: 0.92rem;'>{eff_val}</code>"
 
-                    if status_val == "調和作業中" or "作業中" in str(eff_val):
-                        eff_disp = "<span class='badge-in-progress'>調和作業中</span>"
-                    else:
-                        eff_disp = f"<code style='font-size: 0.92rem;'>{eff_val}</code>"
-
-                    m1.markdown(
-                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>"
-                        f"英語名: <code style='font-size: 0.95rem;'>{row.get('PDG 品目名', 'ー')}</code></div>",
-                        unsafe_allow_html=True
-                    )
-                    m2.markdown(
-                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>"
-                        f"サインオフ: {sign_disp}</div>",
-                        unsafe_allow_html=True
-                    )
-                    m3.markdown(
-                        f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>"
-                        f"日局施行: {eff_disp}</div>",
-                        unsafe_allow_html=True
-                    )
+                    m1.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>英語名: <code style='font-size: 0.95rem;'>{row.get('PDG 品目名', 'ー')}</code></div>", unsafe_allow_html=True)
+                    m2.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>サインオフ: {sign_disp}</div>", unsafe_allow_html=True)
+                    m3.markdown(f"<div style='font-size: 0.95rem; margin-bottom: 6px;'>日局施行: {eff_disp}</div>", unsafe_allow_html=True)
 
                     non_harm = str(row.get("非調和属性", "なし"))
-                    if status_val == "調和作業中" or "作業中" in non_harm:
-                        st.info("**【全局共通 非調和属性 (Non-harmonised)】**\n\n調和作業中")
-                    elif non_harm not in ["なし", "ー", ""]:
-                        st.warning(f"**【全局共通 非調和属性 (Non-harmonised)】**\n\n{non_harm}")
-                    else:
-                        st.success("**【全局共通 非調和属性 (Non-harmonised)】**: なし（調和属性は完全合意）")
+                    if status_val == "調和作業中" or "作業中" in non_harm: st.info("**【全局共通 非調和属性 (Non-harmonised)】**\n\n調和作業中")
+                    elif non_harm not in ["なし", "ー", ""]: st.warning(f"**【全局共通 非調和属性 (Non-harmonised)】**\n\n{non_harm}")
+                    else: st.success("**【全局共通 非調和属性 (Non-harmonised)】**: なし（調和属性は完全合意）")
 
                 with c_right:
                     pmda_url = str(row.get("PMDA_PDF_URL", "")).strip()
                     pdf_filename = str(row.get("元ファイル名", "")).strip()
                     if pmda_url and pmda_url.startswith("http"):
                         st.markdown(f"📄 **[PMDA公式 合意PDFを開く ↗]({pmda_url})**")
-                    elif pdf_filename and pdf_filename not in ["なし", "nan"]:
+                    elif pdf_filename and pdf_filename not in ["なし", "nan", "ー", ""]:
                         st.caption(f"ローカル保存ファイル: `{pdf_filename}`")
                     else:
                         st.caption("合意文書なし（計画削除／作業中）")
@@ -641,52 +387,34 @@ def main():
                 h_ep.markdown("##### 🇪🇺 EP (11th Ed.)")
                 h_ip.markdown("##### 🇮🇳 IP (IP 2022)")
 
-                r1_jp, r1_usp, r1_ep, r1_ip = st.columns(4)
-                
                 def render_card_item(val, default_type="info"):
-                    if status_val == "調和作業中" or "作業中" in str(val):
-                        st.info("調和作業中")
-                    elif str(val) not in ["なし", "ー", ""]:
+                    if status_val == "調和作業中" or "作業中" in str(val): st.info("調和作業中")
+                    elif str(val) not in ["なし", "ー", "", "nan"]:
                         if default_type == "warning": st.warning(str(val))
                         else: st.info(str(val))
                     else:
                         st.write("なし")
 
+                r1_jp, r1_usp, r1_ep, r1_ip = st.columns(4)
                 with r1_jp:
-                    st.markdown(lbl_not, unsafe_allow_html=True)
-                    render_card_item(row.get("🇯🇵 JP不採用項目", "なし"), "warning")
-
+                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇯🇵 JP不採用項目", "なし"), "warning")
                 with r1_usp:
-                    st.markdown(lbl_not, unsafe_allow_html=True)
-                    render_card_item(row.get("🇺🇸 USP不採用項目", "なし"), "warning")
-
+                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇺🇸 USP不採用項目", "なし"), "warning")
                 with r1_ep:
-                    st.markdown(lbl_not, unsafe_allow_html=True)
-                    render_card_item(row.get("🇪🇺 EP不採用項目", "なし"), "warning")
-
+                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇪🇺 EP不採用項目", "なし"), "warning")
                 with r1_ip:
-                    st.markdown(lbl_not, unsafe_allow_html=True)
-                    render_card_item(row.get("🇮🇳 IP不採用項目", "なし"), "warning")
+                    st.markdown(lbl_not, unsafe_allow_html=True); render_card_item(row.get("🇮🇳 IP不採用項目", "なし"), "warning")
 
                 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-
                 r2_jp, r2_usp, r2_ep, r2_ip = st.columns(4)
-                
                 with r2_jp:
-                    st.markdown(lbl_exc, unsafe_allow_html=True)
-                    render_card_item(row.get("🇯🇵 JP独自例外", "なし"), "info")
-
+                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇯🇵 JP独自例外", "なし"), "info")
                 with r2_usp:
-                    st.markdown(lbl_exc, unsafe_allow_html=True)
-                    render_card_item(row.get("🇺🇸 USP独自例外", "なし"), "info")
-
+                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇺🇸 USP独自例外", "なし"), "info")
                 with r2_ep:
-                    st.markdown(lbl_ep_exc, unsafe_allow_html=True)
-                    render_card_item(row.get("🇪🇺 EP独自例外", "なし"), "info")
-
+                    st.markdown(lbl_ep_exc, unsafe_allow_html=True); render_card_item(row.get("🇪🇺 EP独自例外", "なし"), "info")
                 with r2_ip:
-                    st.markdown(lbl_exc, unsafe_allow_html=True)
-                    render_card_item(row.get("🇮🇳 IP独自例外", "なし"), "info")
+                    st.markdown(lbl_exc, unsafe_allow_html=True); render_card_item(row.get("🇮🇳 IP独自例外", "なし"), "info")
 
 if __name__ == "__main__":
     main()
