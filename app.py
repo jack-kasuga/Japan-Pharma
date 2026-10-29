@@ -1,84 +1,233 @@
+# -*- coding: utf-8 -*-
 import streamlit as st
 import pandas as pd
 import sqlite3
 import os
+import re
+import html
 
 # --- 設定項目 ---
 DB_NAME = 'jp_pharmacopoeia.db'
 
 # ページの基本設定
-st.set_page_config(page_title="日本薬局方 検索システム", page_icon="📖", layout="wide")
+st.set_page_config(
+    page_title="日本薬局方 検索システム",
+    page_icon="💊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# 固定のCSS設定
-st.markdown("""
-    <style>
-    /* 1. 全体の余白 */
-    .block-container {
-        padding-top: 4.8rem !important; 
-        padding-bottom: 1rem !important;
-        padding-left: 1.0rem !important;
-        padding-right: 1.0rem !important;
-    }
-    
-    /* 2. タイトル（1.8remに戻しました） */
-    .main-title {
-        text-align: center !important;
-        font-size: 1.8rem !important; 
-        font-weight: bold !important;
-        margin-top: 10px !important; 
-        margin-bottom: 25px !important;
-        color: #000000 !important;
-        line-height: 1.5 !important;
-    }
-    
-    /* 3. サイドバーの文字サイズを少し小さく調整 👈 追加 */
-    [data-testid="stSidebar"] label, [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {
-        font-size: 0.85rem !important;
-    }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        font-size: 1.0rem !important; /* ヘッダーも合わせて微調整 */
-    }
-    
-    /* 4. ボタンの列配置（角丸にするため、隙間を確保） */
-    [data-testid="column"] {
-        padding: 0px 2px !important;
-        margin: 0px !important;
-        flex: 1 1 0% !important;
-        min-width: 0 !important;
-    }
-    [data-testid="stHorizontalBlock"] {
-        gap: 0px !important;
-    }
-    
-    /* 5. ボタンのスタイル（角丸・デフォルト状態） */
-    .stButton > button {
-        width: 100% !important;
-        border-radius: 6px !important; 
-        height: 2.4em !important;
-        padding: 0px 2px !important;
-        font-size: 0.75rem !important;
-        background-color: #f8f9fa !important;
-        border: 1px solid #ced4da !important;
-        margin: 0px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        transition: all 0.2s ease;
-    }
-    .stButton > button:hover {
-        background-color: #e9ecef !important;
-        border-color: #adb5bd !important;
-    }
+# UIおよびCSS設定
+app_css = """
+<style>
+/* 画面全体のスクロールバーを非表示にし、高さをビューポート内に固定 */
+html, body, [data-testid="stAppViewContainer"], .main {
+    overflow: hidden !important;
+    height: 100% !important;
+}
 
-    /* 6. 表のヘッダーを中央揃え */
-    div[data-testid="stDataFrame"] div[role="columnheader"] > div {
-        justify-content: center !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    </style>
-    
-    <div class="main-title">💊 第十九改正日本薬局方 新規収載・改正品検索システム</div>
-    """, unsafe_allow_html=True)
+/* 1. 全体の余白 */
+.block-container { 
+    padding-top: 0.5rem !important; 
+    padding-bottom: 0.8rem !important; 
+    padding-left: 1.5rem !important; 
+    padding-right: 1.5rem !important; 
+    max-height: 100vh !important;
+    box-sizing: border-box !important;
+}
+header[data-testid="stHeader"] { 
+    background-color: transparent !important; 
+    height: 1.5rem !important; 
+}
+
+/* 2. メインタイトル */
+.custom-main-title { 
+    font-size: 1.6rem !important; 
+    font-weight: 800 !important; 
+    color: #1a202c !important; 
+    text-align: center !important; 
+    margin-top: 0px !important; 
+    margin-bottom: 8px !important; 
+    line-height: 1.2 !important; 
+}
+
+/* 3. 五十音ボタンの横並び配置 */
+[data-testid="column"] {
+    padding: 0px 2px !important;
+    margin: 0px !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+}
+[data-testid="stHorizontalBlock"] {
+    gap: 0px !important;
+}
+.stButton > button {
+    width: 100% !important;
+    border-radius: 6px !important; 
+    height: 2.2em !important;
+    padding: 0px 2px !important;
+    font-size: clamp(0.68rem, 0.8vw, 0.78rem) !important;
+    background-color: #f8f9fa !important;
+    border: 1px solid #ced4da !important;
+    margin: 0px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    transition: all 0.2s ease;
+}
+.stButton > button:hover {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+}
+
+/* 4. レスポンシブテーブル */
+.custom-table-container { 
+    height: calc(100vh - 250px) !important; 
+    max-height: calc(100vh - 250px) !important; 
+    overflow-y: auto !important; 
+    overflow-x: auto !important; 
+    border: 1px solid #d0d7de; 
+    border-radius: 8px; 
+    margin-top: 6px;
+    margin-bottom: 12px !important; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
+    background-color: #ffffff; 
+}
+.custom-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 13px; 
+    table-layout: fixed !important; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+}
+.custom-table th { 
+    position: sticky; 
+    top: 0; 
+    background-color: #f6f8fa; 
+    color: #24292f; 
+    font-weight: 600; 
+    padding: 8px 10px; 
+    border-bottom: 2px solid #d0d7de; 
+    border-right: 1px solid #eaeef2; 
+    white-space: nowrap; 
+    text-align: center; 
+    z-index: 20; 
+    user-select: none; 
+}
+.custom-table th:hover { background-color: #eaeef2; }
+.custom-table td { 
+    padding: 7px 10px; 
+    border-bottom: 1px solid #eaeef2; 
+    border-right: 1px solid #f0f3f6; 
+    color: #24292f; 
+    vertical-align: middle; 
+}
+.custom-table tr:hover td { background-color: #f8fafc; }
+
+/* 医薬品名（品目）：1行で表示 */
+.col-drug-name {
+    text-align: left !important;
+    font-weight: 600;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.35;
+}
+
+/* 5. 「〇」セル全体の黄色ハイライト */
+.cell-circle-yellow {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    font-size: 14px;
+}
+
+/* 6. ホバー＆クリックで開く吹き出し（右横展開） */
+.popup-container { 
+    position: relative; 
+    display: inline-block; 
+    cursor: pointer; 
+    outline: none; 
+}
+.popup-badge {
+    color: #0969da;
+    background-color: #ddf4ff;
+    border: 1px solid #54aeff;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.popup-badge:hover {
+    background-color: #b6e3ff;
+}
+
+/* 吹き出し本体（右横展開） */
+.popup-content { 
+    visibility: hidden; 
+    opacity: 0;
+    position: absolute;
+    z-index: 9999 !important; 
+    top: 50%;
+    transform: translateY(-50%);
+    left: calc(100% + 12px); 
+    width: 480px; 
+    max-width: 50vw;
+    max-height: 260px;
+    overflow-y: auto;
+    background-color: #ffffff; 
+    color: #24292f; 
+    text-align: left; 
+    border-radius: 8px; 
+    padding: 10px 14px; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22); 
+    border: 1px solid #0969da; 
+    transition: opacity 0.2s ease, visibility 0.2s ease; 
+    white-space: normal; 
+    font-weight: normal; 
+    line-height: 1.45; 
+}
+.popup-content::after { 
+    content: ""; 
+    position: absolute; 
+    top: 50%; 
+    right: 100%; 
+    margin-top: -6px;
+    border-width: 6px; 
+    border-style: solid; 
+    border-color: transparent #0969da transparent transparent; 
+}
+
+.popup-container:hover .popup-content,
+.popup-container:focus .popup-content,
+.popup-container:focus-within .popup-content,
+.popup-container:active .popup-content { 
+    visibility: visible !important; 
+    opacity: 1 !important; 
+}
+
+.popup-detail-row {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #e1e4e8;
+}
+.popup-detail-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+.popup-item-label {
+    font-weight: 700;
+    color: #0969da;
+}
+</style>
+"""
+st.markdown(app_css, unsafe_allow_html=True)
+
+st.markdown('<div class="custom-main-title">💊 第十九改正日本薬局方 新規収載・改正品検索システム</div>', unsafe_allow_html=True)
 
 # --- データベース関連関数 ---
 def get_db_connection():
@@ -98,7 +247,7 @@ def load_data():
         return df
     return pd.DataFrame()
 
-# --- 索引データ定義（自立型） ---
+# --- 索引データ定義 ---
 def load_kana_bounds():
     idx_chem = {
         'ア': 1, 'イ': 142, 'ウ': 222, 'エ': 230, 'オ': 323, 'カ': 354, 'キ': 408, 'ク': 421, 'ケ': 515, 'コ': 536,
@@ -134,9 +283,73 @@ def load_kana_bounds():
         return cat_bounds
     return {"化学薬品等": build(idx_chem), "生薬等": build(idx_bio)}
 
-def highlight_cells(val):
-    if val == '〇': return 'background-color: #ffff00; color: black;'
-    return ''
+# 変更項目の【】を安全に分割・抽出する堅牢な関数（無限ループ・バックトラック回避版）
+def format_change_item(text):
+    if not text or text.strip() in ['ー', '-', '']:
+        return '<span style="color: #8c959f;">ー</span>'
+    
+    if '【' not in text:
+        return html.escape(text)
+
+    try:
+        detailed_items = []
+        plain_labels = []
+
+        # 【...】の部分を安全に切り分ける
+        pattern = re.compile(r'([^,、\s【]+)?\s*【(.*?)】')
+        last_end = 0
+        for m in pattern.finditer(text):
+            # 【】の前のテキストを処理
+            pre = text[last_end:m.start()].strip(' ,、')
+            if pre:
+                for p in re.split(r'[,、]', pre):
+                    p_clean = p.strip()
+                    if p_clean and p_clean != 'ー':
+                        plain_labels.append(p_clean)
+
+            label = (m.group(1) or '').strip()
+            detail = m.group(2).strip()
+            if label:
+                plain_labels.append(label)
+                detailed_items.append((label, detail))
+            else:
+                detailed_items.append(('詳細', detail))
+            last_end = m.end()
+
+        # 【】の後の残りテキストを処理
+        post = text[last_end:].strip(' ,、')
+        if post:
+            for p in re.split(r'[,、]', post):
+                p_clean = p.strip()
+                if p_clean and p_clean != 'ー':
+                    plain_labels.append(p_clean)
+
+        if detailed_items:
+            display_summary = "、".join(plain_labels) if plain_labels else "詳細あり"
+            
+            detail_lines_html = []
+            for lbl, det in detailed_items:
+                safe_lbl = html.escape(lbl)
+                safe_det = html.escape(det)
+                detail_lines_html.append(
+                    f'<div class="popup-detail-row">'
+                    f'<span class="popup-item-label">{safe_lbl}:</span> {safe_det}'
+                    f'</div>'
+                )
+            
+            inner_content = "".join(detail_lines_html)
+            safe_summary = html.escape(display_summary)
+            
+            return (
+                f'<div class="popup-container" tabindex="0">'
+                f'<span class="popup-badge">💬 {safe_summary}</span>'
+                f'<div class="popup-content">{inner_content}</div>'
+                f'</div>'
+            )
+    except Exception:
+        pass
+
+    return html.escape(text)
 
 # データの読み込み
 df_raw = load_data()
@@ -147,22 +360,22 @@ if df_raw.empty:
 if 'selected_kana' not in st.session_state:
     st.session_state.selected_kana = "全件表示"
 
-# --- 動的なCSS（選択中のボタン強調） ---
+# 選択中ボタンの強調CSS
 kana_labels = ["ア行(ア～オ)", "カ行(カ～コ)", "サ行(サ～ソ)", "タ行(タ～ト)", "ナ行(ナ～ノ)", "ハ行(ハ～ホ)", "マ行(マ～モ)", "ヤ行(ヤ～ヨ)", "ラ行(ラ～ロ)", "ワ行(ワ)", "全件表示"]
 active_idx = kana_labels.index(st.session_state.selected_kana) + 1 
 
 st.markdown(f"""
-    <style>
-    [data-testid="column"]:nth-child({active_idx}) .stButton > button {{
-        border: 2px solid #ff4b4b !important;
-        background-color: #fff0f0 !important;
-        color: #ff4b4b !important;
-        font-weight: bold !important;
-    }}
-    </style>
+<style>
+[data-testid="column"]:nth-child({active_idx}) .stButton > button {{
+    border: 2px solid #ff4b4b !important;
+    background-color: #fff0f0 !important;
+    color: #ff4b4b !important;
+    font-weight: bold !important;
+}}
+</style>
 """, unsafe_allow_html=True)
 
-# --- UI: 検索エリア ---
+# 検索入力
 search_word = st.text_input("検索", placeholder="🔍 品目名を入力してください", label_visibility="collapsed")
 
 cols = st.columns(len(kana_labels))
@@ -200,26 +413,64 @@ if sel_kana != "全件表示":
             mask |= (df_filtered['カテゴリー'] == cat) & (kouban_num >= start) & (kouban_num < end)
     df_filtered = df_filtered[mask]
 
-# 行非表示フィルタの適用
+# 行非表示フィルタの適用（スペースの有無に関わらず確実に除外）
 if remove_chem: 
     df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '化学薬品等') & (df_filtered['変更項目'].str.contains('化学名', na=False)))]
 if remove_seijo: 
-    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '生薬等') & (df_filtered['変更項目'].str.contains('4.生薬の性状', na=False)))]
+    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '生薬等') & (df_filtered['変更項目'].str.contains('生薬の性状', na=False)))]
 if remove_kanren:
     df_filtered = df_filtered[~(df_filtered['変更項目'].str.contains('関連表記', na=False))]
 
-# 結果表示
-st.write(f"📊 検索結果: **{len(df_filtered)}** 件 / 選択中: {sel_kana}")
+# 結果件数表示
+st.caption(f"表示中: **{len(df_filtered)} / {len(df_raw)} 件** （選択中: {sel_kana}）")
+
 if not df_filtered.empty:
-    display_cols = ['項番', '医薬品名', '頁', '新規', '改正', '変更項目', 'カテゴリー']
-    styled_df = df_filtered[display_cols].style.map(highlight_cells, subset=['新規', '改正'])
-    st.dataframe(styled_df, use_container_width=True, hide_index=True, height=800,
-                 column_config={"項番": st.column_config.Column(width=65, alignment="right"),
-                                "医薬品名": st.column_config.Column(width=600),
-                                "頁": st.column_config.Column(width=55, alignment="center"),
-                                "新規": st.column_config.Column(width=55, alignment="center"),
-                                "改正": st.column_config.Column(width=55, alignment="center"),
-                                "カテゴリー": st.column_config.Column(width=110, alignment="center"),
-                                "変更項目": st.column_config.Column(width="large")})
+    rows_html = []
+    for _, row in df_filtered.iterrows():
+        is_new = row.get('新規') == '〇'
+        new_td_class = ' class="cell-circle-yellow"' if is_new else ' style="text-align: center;"'
+        new_text = '〇' if is_new else '<span style="color: #8c959f;">ー</span>'
+
+        is_rev = row.get('改正') == '〇'
+        rev_td_class = ' class="cell-circle-yellow"' if is_rev else ' style="text-align: center;"'
+        rev_text = '〇' if is_rev else '<span style="color: #8c959f;">ー</span>'
+
+        change_val = format_change_item(str(row.get('変更項目', 'ー')))
+
+        rows_html.append(
+            f'<tr>'
+            f'<td style="text-align: center; color: #57606a;">{html.escape(str(row.get("項番", "")))}</td>'
+            f'<td class="col-drug-name">{html.escape(str(row.get("医薬品名", "")))}</td>'
+            f'<td style="text-align: center; font-size: 12px; color: #57606a;">{html.escape(str(row.get("頁", "")))}</td>'
+            f'<td{new_td_class}>{new_text}</td>'
+            f'<td{rev_td_class}>{rev_text}</td>'
+            f'<td style="text-align: center; font-size: 12px;">{html.escape(str(row.get("カテゴリー", "")))}</td>'
+            f'<td style="text-align: left;">{change_val}</td>'
+            f'</tr>'
+        )
+
+    tbody_content = "".join(rows_html)
+    # 幅の指定をすべて <th> 側で一元管理（テーブル全体のズレを解消）
+    table_html = (
+        '<div class="custom-table-container">'
+        '<table class="custom-table">'
+        '<thead><tr>'
+        '<th style="width: 55px;">項番</th>'
+        '<th style="width: 500px;">医薬品名</th>'
+        '<th style="width: 85px;">頁</th>'
+        '<th style="width: 50px;">新規</th>'
+        '<th style="width: 50px;">改正</th>'
+        '<th style="width: 95px;">カテゴリー</th>'
+        '<th>変更項目</th>'
+        '</tr></thead>'
+        f'<tbody>{tbody_content}</tbody>'
+        '</table>'
+        '</div>'
+    )
+    
+    if hasattr(st, "html"):
+        st.html(table_html)
+    else:
+        st.markdown(table_html, unsafe_allow_html=True)
 else:
     st.info("条件に一致する品目が見つかりませんでした。")
