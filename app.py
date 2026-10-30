@@ -391,7 +391,7 @@ selected_cats = [cat for cat in (df_raw['カテゴリー'].unique()) if st.sideb
 only_new, only_revised = st.sidebar.checkbox("新規収載品のみ"), st.sidebar.checkbox("改正品目のみ")
 
 st.sidebar.subheader("行非表示フィルター")
-remove_chem = st.sidebar.checkbox("「化学名」を含む行を非表示")
+remove_chem = st.sidebar.checkbox("「化学名」のみを含む行を非表示")
 remove_seijo = st.sidebar.checkbox("「4.生薬の性状」を含む行を非表示")
 remove_kanren = st.sidebar.checkbox("「関連表記」を含む行を非表示")
 
@@ -413,9 +413,10 @@ if sel_kana != "全件表示":
             mask |= (df_filtered['カテゴリー'] == cat) & (kouban_num >= start) & (kouban_num < end)
     df_filtered = df_filtered[mask]
 
-# 行非表示フィルタの適用（スペースの有無に関わらず確実に除外）
+# 行非表示フィルタの適用
 if remove_chem: 
-    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '化学薬品等') & (df_filtered['変更項目'].str.contains('化学名', na=False)))]
+    # 「化学名」単体（完全一致）のみを除外
+    df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '化学薬品等') & (df_filtered['変更項目'].str.strip() == '化学名'))]
 if remove_seijo: 
     df_filtered = df_filtered[~((df_filtered['カテゴリー'] == '生薬等') & (df_filtered['変更項目'].str.contains('生薬の性状', na=False)))]
 if remove_kanren:
@@ -450,7 +451,6 @@ if not df_filtered.empty:
         )
 
     tbody_content = "".join(rows_html)
-    # 幅の指定をすべて <th> 側で一元管理（テーブル全体のズレを解消）
     table_html = (
         '<div class="custom-table-container">'
         '<table class="custom-table">'
