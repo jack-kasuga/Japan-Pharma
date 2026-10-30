@@ -12,7 +12,7 @@ DB_NAME = 'jp_pharmacopoeia.db'
 # ページの基本設定
 st.set_page_config(
     page_title="日本薬局方 検索システム",
-    page_icon="💊",
+    page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
